@@ -14,8 +14,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        login.cpp
+        login.cpp \
+    ventanaprincipal.cpp
 
-HEADERS  += login.h
+HEADERS  += login.h \
+    ventanaprincipal.h
 
-FORMS    += login.ui
+FORMS    += login.ui \
+    ventanaprincipal.ui
