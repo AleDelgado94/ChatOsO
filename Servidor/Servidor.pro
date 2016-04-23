@@ -12,8 +12,12 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 DISTFILES += \
+<<<<<<< HEAD
     protobuf.pri \
     protomessage.proto
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
+=======
+    config.ini
+>>>>>>> ConfiguracionServidor
