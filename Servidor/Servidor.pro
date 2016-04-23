@@ -9,15 +9,12 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES +=
 
 DISTFILES += \
-<<<<<<< HEAD
     protobuf.pri \
     protomessage.proto
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
-=======
-    config.ini
->>>>>>> ConfiguracionServidor
+
