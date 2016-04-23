@@ -36,7 +36,7 @@ DISTNAME      = Cliente1.0.0
 DISTDIR = /home/aledelgado/git/SOA/ChatOsO/build-Cliente-Desktop_Qt_5_5_1_GCC_64bit-Debug/.tmp/Cliente1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/aledelgado/Qt/5.5/gcc_64 -Wl,-rpath,/home/aledelgado/Qt/5.5/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/aledelgado/Qt/5.5/gcc_64/lib -lQt5Widgets -L/usr/lib64 -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lprotobuf -L/home/aledelgado/Qt/5.5/gcc_64/lib -lQt5Widgets -L/usr/lib64 -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -50,11 +50,13 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../Cliente/main.cpp \
 		../Cliente/login.cpp \
-		../Cliente/ventanaprincipal.cpp moc_login.cpp \
+		../Cliente/ventanaprincipal.cpp protomessage.pb.cc \
+		moc_login.cpp \
 		moc_ventanaprincipal.cpp
 OBJECTS       = main.o \
 		login.o \
 		ventanaprincipal.o \
+		protomessage.pb.o \
 		moc_login.o \
 		moc_ventanaprincipal.o
 DIST          = ../../../../Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
@@ -178,6 +180,7 @@ DIST          = ../../../../Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/spec_post.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/default_pre.prf \
+		../Cliente/protobuf.pri \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/resolve_config.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/default_post.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/qml_debug.prf \
@@ -347,6 +350,7 @@ Makefile: ../Cliente/Cliente.pro ../../../../Qt/5.5/gcc_64/mkspecs/linux-g++/qma
 		../../../../Qt/5.5/gcc_64/mkspecs/features/spec_post.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/default_pre.prf \
+		../Cliente/protobuf.pri \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/resolve_config.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/default_post.prf \
 		../../../../Qt/5.5/gcc_64/mkspecs/features/qml_debug.prf \
@@ -487,6 +491,7 @@ Makefile: ../Cliente/Cliente.pro ../../../../Qt/5.5/gcc_64/mkspecs/linux-g++/qma
 ../../../../Qt/5.5/gcc_64/mkspecs/features/spec_post.prf:
 ../../../../Qt/5.5/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../../../Qt/5.5/gcc_64/mkspecs/features/default_pre.prf:
+../Cliente/protobuf.pri:
 ../../../../Qt/5.5/gcc_64/mkspecs/features/resolve_config.prf:
 ../../../../Qt/5.5/gcc_64/mkspecs/features/default_post.prf:
 ../../../../Qt/5.5/gcc_64/mkspecs/features/qml_debug.prf:
@@ -519,6 +524,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
+	$(COPY_FILE) --parents ../Cliente/protomessage.proto $(DISTDIR)/
+	$(COPY_FILE) --parents ../Cliente/protomessage.proto $(DISTDIR)/
 	$(COPY_FILE) --parents ../Cliente/login.h ../Cliente/ventanaprincipal.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../Cliente/main.cpp ../Cliente/login.cpp ../Cliente/ventanaprincipal.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../Cliente/login.ui ../Cliente/ventanaprincipal.ui $(DISTDIR)/
@@ -541,6 +548,20 @@ mocclean: compiler_moc_header_clean compiler_moc_source_clean
 mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 
 check: first
+
+compiler_protobuf_decl_make_all: protomessage.pb.h
+compiler_protobuf_decl_clean:
+	-$(DEL_FILE) protomessage.pb.h
+protomessage.pb.h: ../Cliente/protomessage.proto
+	protoc --cpp_out=. --proto_path=. --proto_path=../Cliente ../Cliente/protomessage.proto
+
+compiler_protobuf_impl_make_all: protomessage.pb.cc
+compiler_protobuf_impl_clean:
+	-$(DEL_FILE) protomessage.pb.cc
+protomessage.pb.cc: ../Cliente/protomessage.proto \
+		protomessage.pb.h
+	
+
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
@@ -780,7 +801,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_header_clean compiler_uic_clean 
+compiler_clean: compiler_protobuf_decl_clean compiler_protobuf_impl_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
 
@@ -1036,22 +1057,13 @@ login.o: ../Cliente/login.cpp ../Cliente/login.h \
 		../../../../Qt/5.5/gcc_64/include/QtWidgets/qstyle.h \
 		../../../../Qt/5.5/gcc_64/include/QtWidgets/qtabbar.h \
 		../../../../Qt/5.5/gcc_64/include/QtWidgets/qrubberband.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/QLabel \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qlabel.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/QLineEdit \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qlineedit.h \
-		../../../../Qt/5.5/gcc_64/include/QtGui/qtextcursor.h \
-		../../../../Qt/5.5/gcc_64/include/QtGui/qtextformat.h \
-		../../../../Qt/5.5/gcc_64/include/QtGui/qpen.h \
-		../../../../Qt/5.5/gcc_64/include/QtGui/qtextoption.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/QPushButton \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qpushbutton.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/QVBoxLayout \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qboxlayout.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qlayout.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qlayoutitem.h \
-		../../../../Qt/5.5/gcc_64/include/QtWidgets/qgridlayout.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QMenuBar \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qmenubar.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qmenu.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QStatusBar \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QToolBar \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qtoolbar.h \
 		../../../../Qt/5.5/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o ../Cliente/login.cpp
 
@@ -1161,8 +1173,47 @@ ventanaprincipal.o: ../Cliente/ventanaprincipal.cpp ../Cliente/ventanaprincipal.
 		../../../../Qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../../Qt/5.5/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../../Qt/5.5/gcc_64/include/QtGui/qicon.h \
-		ui_ventanaprincipal.h
+		ui_ventanaprincipal.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/QVariant \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QAction \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qaction.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QApplication \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qapplication.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/qeventloop.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../../../Qt/5.5/gcc_64/include/QtGui/qguiapplication.h \
+		../../../../Qt/5.5/gcc_64/include/QtGui/qinputmethod.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QButtonGroup \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qbuttongroup.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QHeaderView \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qheaderview.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qframe.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../../Qt/5.5/gcc_64/include/QtGui/qvalidator.h \
+		../../../../Qt/5.5/gcc_64/include/QtCore/qregularexpression.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qslider.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qstyle.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QMenuBar \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qmenubar.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qmenu.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QStatusBar \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h \
+		../../../../Qt/5.5/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ventanaprincipal.o ../Cliente/ventanaprincipal.cpp
+
+protomessage.pb.o: protomessage.pb.cc 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o protomessage.pb.o protomessage.pb.cc
 
 moc_login.o: moc_login.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_login.o moc_login.cpp

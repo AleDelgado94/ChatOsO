@@ -1,5 +1,6 @@
 #include "login.h"
 #include <QApplication>
+#include "protomessage.pb.h"
 
 int main(int argc, char *argv[])
 {

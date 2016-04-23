@@ -6,6 +6,8 @@
 
 QT       += core gui
 
+
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Cliente
@@ -21,3 +23,7 @@ HEADERS  += login.h \
 
 FORMS    += login.ui \
     ventanaprincipal.ui
+
+PROTOS = protomessage.proto
+include(protobuf.pri)
+
