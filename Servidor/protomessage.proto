@@ -1,0 +1,12 @@
+message Message {
+//0 - Crear la sala
+//1 - Unirse a una sala
+//2 - Envio de mensaje
+//3 - Recepción de mensaje
+
+required uint32 type = 1;
+required string username = 2;
+optional string salaname = 3;
+required string ip = 4;
+optional string message = 5;
+}
