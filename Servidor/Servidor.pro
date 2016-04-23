@@ -9,7 +9,8 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES +=
+SOURCES += \
+    main.cpp
 
 DISTFILES += \
     protobuf.pri \
