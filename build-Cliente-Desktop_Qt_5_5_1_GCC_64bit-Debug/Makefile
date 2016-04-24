@@ -52,21 +52,25 @@ SOURCES       = ../Cliente/main.cpp \
 		../Cliente/login.cpp \
 		../Cliente/perfil.cpp \
 		../Cliente/ventanaprincipal.cpp \
-		../Cliente/configure.cpp protomessage.pb.cc \
+		../Cliente/configure.cpp \
+		../Cliente/chatwindows.cpp protomessage.pb.cc \
 		moc_login.cpp \
 		moc_perfil.cpp \
 		moc_ventanaprincipal.cpp \
-		moc_configure.cpp
+		moc_configure.cpp \
+		moc_chatwindows.cpp
 OBJECTS       = main.o \
 		login.o \
 		perfil.o \
 		ventanaprincipal.o \
 		configure.o \
+		chatwindows.o \
 		protomessage.pb.o \
 		moc_login.o \
 		moc_perfil.o \
 		moc_ventanaprincipal.o \
-		moc_configure.o
+		moc_configure.o \
+		moc_chatwindows.o
 DIST          = /home/allbermc/Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/allbermc/Qt/5.5/gcc_64/mkspecs/common/unix.conf \
 		/home/allbermc/Qt/5.5/gcc_64/mkspecs/common/linux.conf \
@@ -206,11 +210,13 @@ DIST          = /home/allbermc/Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		../Cliente/Cliente.pro ../Cliente/login.h \
 		../Cliente/perfil.h \
 		../Cliente/ventanaprincipal.h \
-		../Cliente/configure.h ../Cliente/main.cpp \
+		../Cliente/configure.h \
+		../Cliente/chatwindows.h ../Cliente/main.cpp \
 		../Cliente/login.cpp \
 		../Cliente/perfil.cpp \
 		../Cliente/ventanaprincipal.cpp \
-		../Cliente/configure.cpp
+		../Cliente/configure.cpp \
+		../Cliente/chatwindows.cpp
 QMAKE_TARGET  = Cliente
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = Cliente
@@ -238,7 +244,7 @@ first: all
 
 ####### Build rules
 
-$(TARGET): ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h $(OBJECTS)  
+$(TARGET): ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h ui_chatwindows.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../Cliente/Cliente.pro /home/allbermc/Qt/5.5/gcc_64/mkspecs/linux-g++/qmake.conf /home/allbermc/Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
@@ -540,9 +546,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../Cliente/protomessage.proto $(DISTDIR)/
 	$(COPY_FILE) --parents ../Cliente/protomessage.proto $(DISTDIR)/
-	$(COPY_FILE) --parents ../Cliente/login.h ../Cliente/perfil.h ../Cliente/ventanaprincipal.h ../Cliente/configure.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Cliente/main.cpp ../Cliente/login.cpp ../Cliente/perfil.cpp ../Cliente/ventanaprincipal.cpp ../Cliente/configure.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Cliente/login.ui ../Cliente/ventanaprincipal.ui ../Cliente/configure.ui ../Cliente/perfil.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../Cliente/login.h ../Cliente/perfil.h ../Cliente/ventanaprincipal.h ../Cliente/configure.h ../Cliente/chatwindows.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Cliente/main.cpp ../Cliente/login.cpp ../Cliente/perfil.cpp ../Cliente/ventanaprincipal.cpp ../Cliente/configure.cpp ../Cliente/chatwindows.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../Cliente/login.ui ../Cliente/ventanaprincipal.ui ../Cliente/configure.ui ../Cliente/perfil.ui ../Cliente/chatwindows.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -579,9 +585,9 @@ protomessage.pb.cc: ../Cliente/protomessage.proto \
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_login.cpp moc_perfil.cpp moc_ventanaprincipal.cpp moc_configure.cpp
+compiler_moc_header_make_all: moc_login.cpp moc_perfil.cpp moc_ventanaprincipal.cpp moc_configure.cpp moc_chatwindows.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_login.cpp moc_perfil.cpp moc_ventanaprincipal.cpp moc_configure.cpp
+	-$(DEL_FILE) moc_login.cpp moc_perfil.cpp moc_ventanaprincipal.cpp moc_configure.cpp moc_chatwindows.cpp
 moc_login.cpp: /home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qmainwindow.h \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
@@ -1156,11 +1162,117 @@ moc_configure.cpp: /home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QDialog \
 		../Cliente/configure.h
 	/home/allbermc/Qt/5.5/gcc_64/bin/moc $(DEFINES) -I/home/allbermc/Qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/allbermc/Asignaturas/SOA/Proyecto_final/ChatOsO/Cliente -I/home/allbermc/Qt/5.5/gcc_64/include -I/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets -I/home/allbermc/Qt/5.5/gcc_64/include/QtGui -I/home/allbermc/Qt/5.5/gcc_64/include/QtSql -I/home/allbermc/Qt/5.5/gcc_64/include/QtCore -I. ../Cliente/configure.h -o moc_configure.cpp
 
+moc_chatwindows.cpp: /home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qglobal.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qconfig.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfeatures.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtypetraits.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsysinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlogging.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qflags.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_gcc.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv7.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv6.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv5.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_ia64.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_mips.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_x86.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_unix.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmutex.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qnumeric.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qnamespace.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobject.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstring.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qchar.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbytearray.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qrefcount.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qarraydata.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qalgorithms.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qiterator.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringlist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qregexp.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcoreevent.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmetatype.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qisenum.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobject_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmargins.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qrect.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsize.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qpoint.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpalette.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qcolor.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qrgb.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qbrush.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qpair.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvector.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qmatrix.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpolygon.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qregion.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qdatastream.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qiodevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qline.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtransform.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpainterpath.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qimage.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpixelformat.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpixmap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qshareddata.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qhash.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfont.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfontinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qcursor.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qkeysequence.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qevent.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvariant.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qdebug.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtextstream.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlocale.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qset.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qurl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qurlquery.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfile.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfiledevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qvector2d.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
+		../Cliente/chatwindows.h
+	/home/allbermc/Qt/5.5/gcc_64/bin/moc $(DEFINES) -I/home/allbermc/Qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/allbermc/Asignaturas/SOA/Proyecto_final/ChatOsO/Cliente -I/home/allbermc/Qt/5.5/gcc_64/include -I/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets -I/home/allbermc/Qt/5.5/gcc_64/include/QtGui -I/home/allbermc/Qt/5.5/gcc_64/include/QtSql -I/home/allbermc/Qt/5.5/gcc_64/include/QtCore -I. ../Cliente/chatwindows.h -o moc_chatwindows.cpp
+
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h
+compiler_uic_make_all: ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h ui_chatwindows.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h
+	-$(DEL_FILE) ui_login.h ui_ventanaprincipal.h ui_configure.h ui_perfil.h ui_chatwindows.h
 ui_login.h: ../Cliente/login.ui
 	/home/allbermc/Qt/5.5/gcc_64/bin/uic ../Cliente/login.ui -o ui_login.h
 
@@ -1172,6 +1284,9 @@ ui_configure.h: ../Cliente/configure.ui
 
 ui_perfil.h: ../Cliente/perfil.ui
 	/home/allbermc/Qt/5.5/gcc_64/bin/uic ../Cliente/perfil.ui -o ui_perfil.h
+
+ui_chatwindows.h: ../Cliente/chatwindows.ui
+	/home/allbermc/Qt/5.5/gcc_64/bin/uic ../Cliente/chatwindows.ui -o ui_chatwindows.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -1710,13 +1825,22 @@ login.o: ../Cliente/login.cpp ../Cliente/login.h \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qbuttongroup.h \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QHeaderView \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qheaderview.h \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QMenuBar \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qmenubar.h \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qmenu.h \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QStatusBar \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QToolBar \
-		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qtoolbar.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QLabel \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qlabel.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QLineEdit \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtextcursor.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtextformat.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpen.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtextoption.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QPushButton \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QVBoxLayout \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qlayout.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qgridlayout.h \
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o ../Cliente/login.cpp
 
@@ -2197,6 +2321,116 @@ configure.o: ../Cliente/configure.cpp /home/allbermc/Qt/5.5/gcc_64/include/QtWid
 		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qspinbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o configure.o ../Cliente/configure.cpp
 
+chatwindows.o: ../Cliente/chatwindows.cpp ../Cliente/chatwindows.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qglobal.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qconfig.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfeatures.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtypetraits.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsysinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlogging.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qflags.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_gcc.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv7.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv6.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_armv5.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_ia64.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_mips.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_x86.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qatomic_unix.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmutex.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qnumeric.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qnamespace.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobject.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstring.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qchar.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbytearray.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qrefcount.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qarraydata.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qalgorithms.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qiterator.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringlist.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qregexp.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcoreevent.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmetatype.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qisenum.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qobject_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmargins.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qrect.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsize.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qpoint.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpalette.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qcolor.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qrgb.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qbrush.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qpair.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvector.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qmatrix.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpolygon.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qregion.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qdatastream.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qiodevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qline.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtransform.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpainterpath.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qimage.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpixelformat.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qpixmap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qshareddata.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qhash.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfont.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qfontinfo.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qcursor.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qkeysequence.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qevent.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qvariant.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qmap.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qdebug.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qtextstream.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qlocale.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qset.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qurl.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qurlquery.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfile.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qfiledevice.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qvector2d.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
+		ui_chatwindows.h \
+		../Cliente/ventanaprincipal.h \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/QProcess \
+		/home/allbermc/Qt/5.5/gcc_64/include/QtCore/qprocess.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chatwindows.o ../Cliente/chatwindows.cpp
+
 protomessage.pb.o: protomessage.pb.cc 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o protomessage.pb.o protomessage.pb.cc
 
@@ -2211,6 +2445,9 @@ moc_ventanaprincipal.o: moc_ventanaprincipal.cpp
 
 moc_configure.o: moc_configure.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_configure.o moc_configure.cpp
+
+moc_chatwindows.o: moc_chatwindows.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_chatwindows.o moc_chatwindows.cpp
 
 ####### Install
 
