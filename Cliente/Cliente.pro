@@ -28,7 +28,7 @@ HEADERS  += login.h \
 
 FORMS    += login.ui \
     ventanaprincipal.ui
-    configure.ui
+    configure.ui \
     perfil.ui
 
 PROTOS = protomessage.proto
