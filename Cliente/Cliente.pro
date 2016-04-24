@@ -27,7 +27,7 @@ HEADERS  += login.h \
     configure.h
 
 FORMS    += login.ui \
-    ventanaprincipal.ui
+    ventanaprincipal.ui \
     configure.ui \
     perfil.ui
 
