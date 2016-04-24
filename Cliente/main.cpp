@@ -1,12 +1,19 @@
 #include "login.h"
+#include "ventanaprincipal.h"
 #include <QApplication>
 #include "protomessage.pb.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Login w;
-    w.show();
+    QApplication::setOrganizationName("Universidad de La Laguna");
+    QApplication::setApplicationName("ChatOsO");
+    QApplication::setOrganizationDomain("ull.es");
+    //Login w;
+    //w.show();
+    VentanaPrincipal v;
+    v.show();
+
 
     return a.exec();
 }
