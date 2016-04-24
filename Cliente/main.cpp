@@ -1,7 +1,7 @@
 #include "login.h"
 #include "ventanaprincipal.h"
 #include <QApplication>
-#include "protomessage.pb.h"
+//#include "protomessage.pb.h"
 
 int main(int argc, char *argv[])
 {

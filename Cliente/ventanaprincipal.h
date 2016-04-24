@@ -23,6 +23,10 @@ private slots:
 
     void on_pushButtonDesconectar_clicked();
 
+    void on_lineEditConectsalas_textEdited();
+
+    void on_lineEditCrearsalas_textEdited();
+
 private:
     Ui::VentanaPrincipal *ui;
 };

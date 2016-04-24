@@ -35,3 +35,25 @@ void VentanaPrincipal::on_pushButtonDesconectar_clicked()
 {
     qApp->quit();
 }
+
+void VentanaPrincipal::on_lineEditConectsalas_textEdited()
+{
+    ui->lineEditCrearsalas->setDisabled(true);
+    ui->labelCrearSalas->setDisabled(true);
+
+        if(ui->lineEditConectsalas->text().isEmpty()){
+            ui->labelCrearSalas->setDisabled(false);
+            ui->lineEditCrearsalas->setDisabled(false);
+        }
+}
+
+void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
+{
+    ui->labelConectsalas->setDisabled(true);
+    ui->lineEditConectsalas->setDisabled(true);
+
+        if(ui->lineEditCrearsalas->text().isEmpty()){
+            ui->labelConectsalas->setDisabled(false);
+            ui->lineEditConectsalas->setDisabled(false);
+        }
+}
