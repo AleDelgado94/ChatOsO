@@ -22,6 +22,8 @@ void ChatWindows::on_pushButtonDesconectar_clicked()
 
 void ChatWindows::on_pushButtonSalir_clicked()
 {
+
+
     this->hide();
 
     VentanaPrincipal principalwindows;
