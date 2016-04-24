@@ -14,10 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         login.cpp \
-    ventanaprincipal.cpp
+    perfil.cpp \
+    ventanaprincipal.cpp \
+    configure.cpp
 
 HEADERS  += login.h \
-    ventanaprincipal.h
+    perfil.h \
+    ventanaprincipal.h \
+    configure.h
 
 FORMS    += login.ui \
-    ventanaprincipal.ui
+    perfil.ui \
+    ventanaprincipal.ui \
+    configure.ui
