@@ -1,5 +1,7 @@
 QT += core
 QT -= gui
+QT += network
+QT += sql
 
 CONFIG += c++11
 
@@ -10,7 +12,8 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    myudp.cpp
 
 DISTFILES += \
     protobuf.pri \
@@ -18,4 +21,7 @@ DISTFILES += \
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
+
+HEADERS += \
+    myudp.h
 

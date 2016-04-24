@@ -143,6 +143,13 @@ class Message : public ::google::protobuf::Message {
   inline ::std::string* release_message();
   inline void set_allocated_message(::std::string* message);
 
+  // required uint32 port = 6;
+  inline bool has_port() const;
+  inline void clear_port();
+  static const int kPortFieldNumber = 6;
+  inline ::google::protobuf::uint32 port() const;
+  inline void set_port(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:Message)
  private:
   inline void set_has_type();
@@ -155,6 +162,8 @@ class Message : public ::google::protobuf::Message {
   inline void clear_has_ip();
   inline void set_has_message();
   inline void clear_has_message();
+  inline void set_has_port();
+  inline void clear_has_port();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -162,9 +171,10 @@ class Message : public ::google::protobuf::Message {
   mutable int _cached_size_;
   ::std::string* username_;
   ::std::string* salaname_;
+  ::google::protobuf::uint32 type_;
+  ::google::protobuf::uint32 port_;
   ::std::string* ip_;
   ::std::string* message_;
-  ::google::protobuf::uint32 type_;
   friend void  protobuf_AddDesc_protomessage_2eproto();
   friend void protobuf_AssignDesc_protomessage_2eproto();
   friend void protobuf_ShutdownFile_protomessage_2eproto();
@@ -505,6 +515,30 @@ inline void Message::set_allocated_message(::std::string* message) {
     message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:Message.message)
+}
+
+// required uint32 port = 6;
+inline bool Message::has_port() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void Message::set_has_port() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void Message::clear_has_port() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void Message::clear_port() {
+  port_ = 0u;
+  clear_has_port();
+}
+inline ::google::protobuf::uint32 Message::port() const {
+  // @@protoc_insertion_point(field_get:Message.port)
+  return port_;
+}
+inline void Message::set_port(::google::protobuf::uint32 value) {
+  set_has_port();
+  port_ = value;
+  // @@protoc_insertion_point(field_set:Message.port)
 }
 
 
