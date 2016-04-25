@@ -49,7 +49,7 @@ void MyUDP::readyRead()
         case 0: //CREAR LA SALA
         {
             QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-            db->setDatabaseName("database.sqlite");
+            db->setDatabaseName("./database.sqlite");
             QSqlQuery query(*db);
 
             int port = m.port();

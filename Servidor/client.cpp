@@ -20,7 +20,7 @@ void Client::readyRead()
     case 0: //Crear Sala
     {
         QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("database.sqlite");
+        db->setDatabaseName("./database.sqlite");
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -51,9 +51,17 @@ void Client::readyRead()
         break;
     case 1:
     {
+
+
+
+
         //UNIRSE A UNA SALA YA CREADA
+
+        //TODO: ENVIAR AL SERVIDOR MI AVATAR
+
+
         QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("database.sqlite");
+        db->setDatabaseName("./database.sqlite");
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -91,7 +99,7 @@ void Client::readyRead()
         //Reenviamos el mensaje a todos los usuarios de la sala
         //Metemos el mensaje en el historial
         QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("database.sqlite");
+        db->setDatabaseName("./database.sqlite");
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -104,7 +112,7 @@ void Client::readyRead()
 
         //REENVIO MENSAJE
         //COMPROBAMOS QUE USUARIOS (DIR + PUERTO) PERTENECEN A ESA SALA
-        std::string usuarios_sala = "SELECT direccion, puerto FROM " + m.message() + ";";
+        std::string usuarios_sala = "SELECT direccion, puerto FROM " + m.salaname() + " WHERE direccion != '" + m.ip() + "' AND puerto != " + puerto + ";";
         QString direccion;
         quint16 p;
 
@@ -114,8 +122,15 @@ void Client::readyRead()
             //CONECTAMOS CON EL HOST Y LE ENVIAMOS LA INFORMACIÓN DEL MENSAJE QUE HEMOS RECIBIDO
             direccion = query.value("direccion").toString();
             p = query.value("puerto").toUInt();
-            tcpSocket_->connectToHost(direccion, quint16(p));
-            tcpSocket_->write(m.message().c_str(), strlen(m.message().c_str()));
+
+            std::string mensaje;
+            mensaje = m.SerializeAsString();
+
+            if(!mensaje.empty()){
+                tcpSocket_->connectToHost(direccion, quint16(p));
+                tcpSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
+            }
+
         }
 
 
@@ -126,7 +141,7 @@ void Client::readyRead()
     case 4:
     {
         QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("database.sqlite");
+        db->setDatabaseName("./database.sqlite");
         QSqlQuery query(*db);
 
         //DESCONEXIÓN. ELIMINACION DE LA SALA

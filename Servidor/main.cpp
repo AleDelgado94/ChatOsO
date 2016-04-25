@@ -11,8 +11,8 @@
 #include <QList>
 
 #include "protomessage.pb.h"
-#include "myudp.h"
-#include "client.h"
+#include "server.h"
+
 
 QList<Client*> clients;
 
@@ -54,30 +54,10 @@ int main(int argc, char *argv[])
         }
     }
 
-    QString port = QString::fromStdString(port_option);
-    quint16 portServer = port.toUShort();
+    quint16 port;
+    port = QString::fromStdString(port_option).toUInt();
 
-    //MyUDP client(QString("127.0.0.10"), quint16(8005));
-    //MyUDP server(QString::fromStdString(ip_option), portServer);
-
-    //std::cout << ip_option << " " << port_option << std::endl;
-
-    /*Message m;
-    m.set_type(2);
-    m.set_ip("127.0.0.2");
-    m.set_port(8003);
-    m.set_message("Hola me llamo alejandro");
-    m.set_salaname("SalaJuan");
-    m.set_username("PEPE");*/
-
-    //std::string paquete;
-    //paquete = m.SerializeAsString();
-
-    //client.send(m);
-
-
-    //client.socket->connectToHost(QHostAddress(QString("127.0.0.2")), 8003);
-    //client.socket->write(paquete.c_str(), qstrlen(paquete.c_str()));
+    Server servidor(QString::fromStdString(ip_option), quint16(port));
 
 
 
