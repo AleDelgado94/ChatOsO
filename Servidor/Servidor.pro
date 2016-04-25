@@ -13,7 +13,9 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    myudp.cpp
+    myudp.cpp \
+    client.cpp \
+    server.cpp
 
 DISTFILES += \
     protobuf.pri \
@@ -23,5 +25,7 @@ PROTOS = protomessage.proto
 include(protobuf.pri)
 
 HEADERS += \
-    myudp.h
+    myudp.h \
+    client.h \
+    server.h
 

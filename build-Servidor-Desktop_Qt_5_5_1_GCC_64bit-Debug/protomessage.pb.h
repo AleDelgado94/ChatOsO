@@ -150,6 +150,18 @@ class Message : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 port() const;
   inline void set_port(::google::protobuf::uint32 value);
 
+  // optional bytes avatar = 7;
+  inline bool has_avatar() const;
+  inline void clear_avatar();
+  static const int kAvatarFieldNumber = 7;
+  inline const ::std::string& avatar() const;
+  inline void set_avatar(const ::std::string& value);
+  inline void set_avatar(const char* value);
+  inline void set_avatar(const void* value, size_t size);
+  inline ::std::string* mutable_avatar();
+  inline ::std::string* release_avatar();
+  inline void set_allocated_avatar(::std::string* avatar);
+
   // @@protoc_insertion_point(class_scope:Message)
  private:
   inline void set_has_type();
@@ -164,6 +176,8 @@ class Message : public ::google::protobuf::Message {
   inline void clear_has_message();
   inline void set_has_port();
   inline void clear_has_port();
+  inline void set_has_avatar();
+  inline void clear_has_avatar();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -175,6 +189,7 @@ class Message : public ::google::protobuf::Message {
   ::google::protobuf::uint32 port_;
   ::std::string* ip_;
   ::std::string* message_;
+  ::std::string* avatar_;
   friend void  protobuf_AddDesc_protomessage_2eproto();
   friend void protobuf_AssignDesc_protomessage_2eproto();
   friend void protobuf_ShutdownFile_protomessage_2eproto();
@@ -539,6 +554,82 @@ inline void Message::set_port(::google::protobuf::uint32 value) {
   set_has_port();
   port_ = value;
   // @@protoc_insertion_point(field_set:Message.port)
+}
+
+// optional bytes avatar = 7;
+inline bool Message::has_avatar() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void Message::set_has_avatar() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void Message::clear_has_avatar() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void Message::clear_avatar() {
+  if (avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    avatar_->clear();
+  }
+  clear_has_avatar();
+}
+inline const ::std::string& Message::avatar() const {
+  // @@protoc_insertion_point(field_get:Message.avatar)
+  return *avatar_;
+}
+inline void Message::set_avatar(const ::std::string& value) {
+  set_has_avatar();
+  if (avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    avatar_ = new ::std::string;
+  }
+  avatar_->assign(value);
+  // @@protoc_insertion_point(field_set:Message.avatar)
+}
+inline void Message::set_avatar(const char* value) {
+  set_has_avatar();
+  if (avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    avatar_ = new ::std::string;
+  }
+  avatar_->assign(value);
+  // @@protoc_insertion_point(field_set_char:Message.avatar)
+}
+inline void Message::set_avatar(const void* value, size_t size) {
+  set_has_avatar();
+  if (avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    avatar_ = new ::std::string;
+  }
+  avatar_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:Message.avatar)
+}
+inline ::std::string* Message::mutable_avatar() {
+  set_has_avatar();
+  if (avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    avatar_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:Message.avatar)
+  return avatar_;
+}
+inline ::std::string* Message::release_avatar() {
+  clear_has_avatar();
+  if (avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = avatar_;
+    avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void Message::set_allocated_avatar(::std::string* avatar) {
+  if (avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete avatar_;
+  }
+  if (avatar) {
+    set_has_avatar();
+    avatar_ = avatar;
+  } else {
+    clear_has_avatar();
+    avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:Message.avatar)
 }
 
 

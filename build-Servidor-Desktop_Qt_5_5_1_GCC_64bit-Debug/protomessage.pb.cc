@@ -32,13 +32,14 @@ void protobuf_AssignDesc_protomessage_2eproto() {
       "protomessage.proto");
   GOOGLE_CHECK(file != NULL);
   Message_descriptor_ = file->message_type(0);
-  static const int Message_offsets_[6] = {
+  static const int Message_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, username_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, salaname_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, ip_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, port_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Message, avatar_),
   };
   Message_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -81,10 +82,10 @@ void protobuf_AddDesc_protomessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022protomessage.proto\"f\n\007Message\022\014\n\004type\030"
+    "\n\022protomessage.proto\"v\n\007Message\022\014\n\004type\030"
     "\001 \002(\r\022\020\n\010username\030\002 \002(\t\022\020\n\010salaname\030\003 \001("
     "\t\022\n\n\002ip\030\004 \002(\t\022\017\n\007message\030\005 \001(\t\022\014\n\004port\030\006"
-    " \002(\r", 124);
+    " \002(\r\022\016\n\006avatar\030\007 \001(\014", 140);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "protomessage.proto", &protobuf_RegisterTypes);
   Message::default_instance_ = new Message();
@@ -108,6 +109,7 @@ const int Message::kSalanameFieldNumber;
 const int Message::kIpFieldNumber;
 const int Message::kMessageFieldNumber;
 const int Message::kPortFieldNumber;
+const int Message::kAvatarFieldNumber;
 #endif  // !_MSC_VER
 
 Message::Message()
@@ -135,6 +137,7 @@ void Message::SharedCtor() {
   ip_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   port_ = 0u;
+  avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -155,6 +158,9 @@ void Message::SharedDtor() {
   }
   if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete message_;
+  }
+  if (avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete avatar_;
   }
   if (this != default_instance_) {
   }
@@ -192,7 +198,7 @@ void Message::Clear() {
     ::memset(&first, 0, n);                                \
   } while (0)
 
-  if (_has_bits_[0 / 32] & 63) {
+  if (_has_bits_[0 / 32] & 127) {
     ZR_(type_, port_);
     if (has_username()) {
       if (username_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -212,6 +218,11 @@ void Message::Clear() {
     if (has_message()) {
       if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         message_->clear();
+      }
+    }
+    if (has_avatar()) {
+      if (avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        avatar_->clear();
       }
     }
   }
@@ -326,6 +337,19 @@ bool Message::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(58)) goto parse_avatar;
+        break;
+      }
+
+      // optional bytes avatar = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_avatar:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_avatar()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -405,6 +429,12 @@ void Message::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->port(), output);
   }
 
+  // optional bytes avatar = 7;
+  if (has_avatar()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      7, this->avatar(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -469,6 +499,13 @@ void Message::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->port(), target);
   }
 
+  // optional bytes avatar = 7;
+  if (has_avatar()) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        7, this->avatar(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -523,6 +560,13 @@ int Message::ByteSize() const {
           this->port());
     }
 
+    // optional bytes avatar = 7;
+    if (has_avatar()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->avatar());
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -568,6 +612,9 @@ void Message::MergeFrom(const Message& from) {
     if (from.has_port()) {
       set_port(from.port());
     }
+    if (from.has_avatar()) {
+      set_avatar(from.avatar());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -598,6 +645,7 @@ void Message::Swap(Message* other) {
     std::swap(ip_, other->ip_);
     std::swap(message_, other->message_);
     std::swap(port_, other->port_);
+    std::swap(avatar_, other->avatar_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

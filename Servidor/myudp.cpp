@@ -12,17 +12,6 @@ void MyUDP::send(Message packet)
     std::string p;
     quint16 port = packet.port();
     QString address = QString::fromStdString(packet.ip());
-    /*QString username = QString::fromStdString(packet.username());
-    QString sala = QString::fromStdString(packet.salaname());
-    uint32_t tipo = packet.type();
-    QString message = QString::fromStdString(packet.message());
-
-    QString paquete = QString::fromStdString(packet.SerializeAsString());
-    QByteArray Buffer;
-    Buffer.append(paquete);
-
-    std::cout << port << address.toStdString() << username.toStdString() <<
-              sala.toStdString() << tipo << message.toStdString() << std::endl;*/
 
     p = packet.SerializeAsString();
 
