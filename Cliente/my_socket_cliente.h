@@ -18,6 +18,7 @@ signals:
 
 public slots:
     void ready();
+    void readyRead();
 };
 
 #endif // MY_SOCKET_CLIENTE_H

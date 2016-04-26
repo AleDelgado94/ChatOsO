@@ -13,14 +13,11 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
 
 void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme, esperar mensajes,...)
 {
-    QByteArray data = sslSocket->readAll();
-    //TODO:procesar datos (deserializar)
-    //TODO2:preparar respuesta "dataOUT"
-    //sslSocket->write(/*TODO2*/);
+   QByteArray Package = ;
 }
 
-void My_Socket_Cliente::readyRead()//para enviarle mensajes al servidor ya cuando escribimos
-{
+void My_Socket_Cliente::readyRead()//para cunado el servidor me reenvie los mensajes de otros user
+    QByteArray data_server = sslSocket->readAll();
 
 }
 
