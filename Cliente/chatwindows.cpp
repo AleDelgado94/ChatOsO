@@ -4,9 +4,10 @@
 
 ChatWindows::ChatWindows(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ChatWindows)
+    ui(new Ui::ChatWindows),
 {
     ui->setupUi(this);
+
 }
 
 ChatWindows::~ChatWindows()
@@ -23,9 +24,17 @@ void ChatWindows::on_pushButtonDesconectar_clicked()
 void ChatWindows::on_pushButtonSalir_clicked()
 {
 
-
     this->hide();
 
     VentanaPrincipal principalwindows;
     principalwindows.exec();
+}
+
+void ChatWindows::on_lineEditTexTenv_returnPressed()
+{
+    if(!ui->lineEditTexTenv->text().isEmpty()){
+        QString mensaje;
+        mensaje = ui->lineEditTexTenv->text();
+        //TODO:Crear estructura mesanje y usuario y socket
+    }
 }

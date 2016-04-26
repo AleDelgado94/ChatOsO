@@ -21,8 +21,11 @@ private slots:
 
     void on_pushButtonSalir_clicked();
 
+    void on_lineEditTexTenv_returnPressed();
+
 private:
     Ui::ChatWindows *ui;
+    bool isConnected_;
 };
 
 #endif // CHATWINDOWS_H
