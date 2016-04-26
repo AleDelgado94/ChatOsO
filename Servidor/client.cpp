@@ -52,9 +52,6 @@ void Client::readyRead()
     case 1:
     {
 
-
-
-
         //UNIRSE A UNA SALA YA CREADA
 
         //TODO: ENVIAR AL SERVIDOR MI AVATAR

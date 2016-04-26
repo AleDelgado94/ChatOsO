@@ -9,6 +9,7 @@
 #include <QUdpSocket>
 #include <fstream>
 #include <QList>
+#include <cstring>
 
 #include "protomessage.pb.h"
 #include "server.h"
@@ -18,6 +19,23 @@ QList<Client*> clients;
 
 int main(int argc, char *argv[])
 {
+/*
+
+    pid_t pid;
+
+    pid = fork();
+
+    if(pid < 0){
+        std::cerr << std::strerror(errno) << '\n';
+        exit(10);
+    }
+
+    if(pid > 0){
+        exit(0);
+    }
+
+*/
+
     QCoreApplication a(argc, argv);
     QCoreApplication::setOrganizationName("ChatOsO");
     QCoreApplication::setOrganizationDomain("ChatOsO");
