@@ -19,12 +19,14 @@ SOURCES += main.cpp\
         login.cpp \
     perfil.cpp \
     ventanaprincipal.cpp \
-    configure.cpp
+    configure.cpp \
+    my_socket_cliente.cpp
 
 HEADERS  += login.h \
     perfil.h \
     ventanaprincipal.h \
-    configure.h
+    configure.h \
+    my_socket_cliente.h
 
 FORMS    += login.ui \
     ventanaprincipal.ui \
