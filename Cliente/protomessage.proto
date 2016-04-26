@@ -12,14 +12,8 @@ optional string message = 5;
 }
 
 message Log{
-//0 - Nombre de usuario
-//1 - contraseña usuario
-//2 - Direccion usuario
-//3 - Puerto usuario
-
-required uint32 type = 1;
-required string name_user = 2;
-required string password = 3;
-required string ip_user = 4
-required string port_user = 5;
+required string name_user = 1;
+required string password = 2;
+required string ip_user = 3;
+required string port_user = 4;
 }
