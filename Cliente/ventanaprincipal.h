@@ -27,6 +27,8 @@ private slots:
 
     void on_lineEditCrearsalas_textEdited();
 
+    void on_pushButtonConectar_clicked();
+
 private:
     Ui::VentanaPrincipal *ui;
 };

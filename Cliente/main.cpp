@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain("ull.es");
     //Login w;
     //w.show();
-   //VentanaPrincipal v;
-   //v.show();
-    ChatWindows chat;
-    chat.show();
+   VentanaPrincipal v;
+   v.show();
+    //ChatWindows chat;
+    //chat.show();
 
 
     return a.exec();
