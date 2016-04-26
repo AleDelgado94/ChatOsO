@@ -31,6 +31,7 @@ private slots:
 
 private:
     Ui::VentanaPrincipal *ui;
+    bool isConnected_;
 };
 
 #endif // VENTANAPRINCIPAL_H

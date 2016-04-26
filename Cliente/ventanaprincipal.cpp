@@ -8,7 +8,8 @@
 
 VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::VentanaPrincipal)
+    ui(new Ui::VentanaPrincipal),
+    isConnected_(false)
 {
     ui->setupUi(this);
 
@@ -62,7 +63,12 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
 
 void VentanaPrincipal::on_pushButtonConectar_clicked()
 {
+    isConnected_=true;
     this->hide();
     ChatWindows chat;
     chat.exec();
+
+    if(isConnected_){
+        //TODO:Crear socket y enviar primera estructura
+    }
 }
