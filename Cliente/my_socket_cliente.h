@@ -3,15 +3,18 @@
 
 #include <QObject>
 #include <QSslSocket>
+#include <QString>
 
 class My_Socket_Cliente : public QObject
 {
     Q_OBJECT
 private:
     QSslSocket* sslSocket;//socket que vamos a utilizar
+    QString username;
+    QString password;
 
 public:
-    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString dir_socket_client, QObject *parent = 0);
+    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString dir_socket_client, QString user_name, QString passwd, QObject *parent = 0);
 
 
 signals:

@@ -1,6 +1,9 @@
+#include <QHostAddress>
+#include<QHostInfo>
+#include <QApplication>
 #include "login.h"
 #include "ventanaprincipal.h"
-#include <QApplication>
+#include "my_socket_cliente.h"
 //#include "protomessage.pb.h"
 
 int main(int argc, char *argv[])
@@ -11,8 +14,9 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain("ull.es");
     //Login w;
     //w.show();
-    VentanaPrincipal v;
-    v.show();
+   //VentanaPrincipal v;
+    //v.show();
+
 
 
     return a.exec();

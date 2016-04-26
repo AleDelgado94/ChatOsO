@@ -9,11 +9,13 @@ required string username = 2;
 optional string salaname = 3;
 required string ip = 4;
 optional string message = 5;
+required uint32 port = 6;
+optional bytes avatar = 7;
 }
 
 message Log{
 required string name_user = 1;
 required string password = 2;
 required string ip_user = 3;
-required string port_user = 4;
+required uint32 port_user = 4;
 }
