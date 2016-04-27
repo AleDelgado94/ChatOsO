@@ -1,6 +1,7 @@
 #include <QHostAddress>
 #include<QHostInfo>
 #include <QApplication>
+
 #include "login.h"
 #include "ventanaprincipal.h"
 #include "my_socket_cliente.h"
@@ -14,10 +15,14 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain("ull.es");
     //Login w;
     //w.show();
-   //VentanaPrincipal v;
+    //VentanaPrincipal v;
     //v.show();
 
+        QList<QHostAddress> list = QNetworkInterface::allAddresses();
 
+        for( int i = 0; i< list.size(); i++){
+           qDebug() << list.at(i).toString();
+        }
 
     return a.exec();
 }
