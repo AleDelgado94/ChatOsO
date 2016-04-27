@@ -4,12 +4,15 @@
 #include "perfil.h"
 #include "configure.h"
 #include "ui_ventanaprincipal.h"
+#include "chatwindows.h"
 
 VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::VentanaPrincipal)
+    ui(new Ui::VentanaPrincipal),
+    isConnected_(false)
 {
     ui->setupUi(this);
+
 }
 
 VentanaPrincipal::~VentanaPrincipal()
@@ -56,4 +59,16 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
             ui->labelConectsalas->setDisabled(false);
             ui->lineEditConectsalas->setDisabled(false);
         }
+}
+
+void VentanaPrincipal::on_pushButtonConectar_clicked()
+{
+    isConnected_=true;
+    this->hide();
+    ChatWindows chat;
+    chat.exec();
+
+    if(isConnected_){
+        //TODO:Crear socket y enviar primera estructura
+    }
 }

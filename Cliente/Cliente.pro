@@ -21,19 +21,25 @@ SOURCES += main.cpp\
     ventanaprincipal.cpp \
     configure.cpp \
     my_socket_cliente.cpp \
-    security.cpp
+    security.cpp \
+    chatwindows.cpp \
+
 
 HEADERS  += login.h \
     perfil.h \
     ventanaprincipal.h \
     configure.h \
+
     my_socket_cliente.h \
-    security.h
+    security.h \
+
+    chatwindows.h \
 
 FORMS    += login.ui \
     ventanaprincipal.ui \
     configure.ui \
-    perfil.ui
+    perfil.ui \
+    chatwindows.ui \
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
