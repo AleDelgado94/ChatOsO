@@ -20,13 +20,15 @@ SOURCES += main.cpp\
     perfil.cpp \
     ventanaprincipal.cpp \
     configure.cpp \
-    my_socket_cliente.cpp
+    my_socket_cliente.cpp \
+    security.cpp
 
 HEADERS  += login.h \
     perfil.h \
     ventanaprincipal.h \
     configure.h \
-    my_socket_cliente.h
+    my_socket_cliente.h \
+    security.h
 
 FORMS    += login.ui \
     ventanaprincipal.ui \
