@@ -6,16 +6,17 @@
 #include <iostream>
 #include <unistd.h>
 #include <QSslSocket>
-#include <QUdpSocket>
 #include <fstream>
 #include <QList>
 #include <cstring>
+#include <QSslCertificate>
+#include <QSslKey>
+#include <QFile>
+#include <QDebug>
 
 #include "protomessage.pb.h"
 #include "server.h"
 
-
-QList<Client*> clients;
 
 int main(int argc, char *argv[])
 {
@@ -75,8 +76,8 @@ int main(int argc, char *argv[])
     quint16 port;
     port = QString::fromStdString(port_option).toUInt();
 
-    Server servidor(QString::fromStdString(ip_option), quint16(port));
-
+    Server server(QString::fromStdString(ip_option), port);
+    server.run();
 
 
     return a.exec();

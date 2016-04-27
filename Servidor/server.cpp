@@ -1,19 +1,24 @@
 #include "server.h"
 
 Server::Server(QString dir, quint16 port, QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    servidor(nullptr),
+    dir_(dir),
+    port_(port)
 {
-    tcpServer = new QTcpServer(this);
-    tcpServer->listen(QHostAddress(dir), port);
+    //db = new QSqlDatabase("./database.sqlite");
+    *db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
+    db->setDatabaseName("./database.sqlite");
+    servidor = new SslServer(dir_,port_,nullptr,nullptr,db,this);
 
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    if(!db->open()){
+        qDebug() << "No se pudo acceder a la base de datos\n";
+        exit(1);
+    }
+
 }
 
-void Server::newConnection()
+void Server::run()
 {
-    while(tcpServer->hasPendingConnections()){
-        QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
-        Client *client = new Client(clientConnection);
-        clients.append(client);
-    }
+    servidor->listen(QHostAddress(dir_), port_);
 }

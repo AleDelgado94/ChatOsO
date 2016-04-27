@@ -15,6 +15,7 @@ SOURCES += \
     main.cpp \
     myudp.cpp \
     client.cpp \
+    sslserver.cpp \
     server.cpp
 
 DISTFILES += \
@@ -27,5 +28,6 @@ include(protobuf.pri)
 HEADERS += \
     myudp.h \
     client.h \
+    sslserver.h \
     server.h
 

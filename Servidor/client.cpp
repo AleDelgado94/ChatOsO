@@ -1,16 +1,30 @@
 #include "client.h"
 
-Client::Client(QTcpSocket *tcpSocket, QObject *parent) :
+Client::Client(QSslSocket *sslSocket, QSqlDatabase *db ,QObject *parent) :
     QObject(parent),
-    tcpSocket_(tcpSocket)
+    sslSocket_(sslSocket),
+    db(db)
 {
-    connect(tcpSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(sslSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(sslSocket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
+    connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(error()));
+    connect(sslSocket_, SIGNAL(disconnected()), sslSocket_, SLOT(deleteLater()));
+
+    if(!db->open()){
+        qDebug() << "Error al abrir la base de datos";
+        exit(1);
+    }
+
 }
 
 void Client::readyRead()
 {
     QByteArray Buffer;
-    Buffer = tcpSocket_->readAll();
+    Buffer = sslSocket_->readAll();
+
+    //TODO: IMPLEMENTAR EL DESERIALIZADO CON EL TAMAÑO DEL PAQUETE
+
+
 
     Message m;
     m.ParseFromString(Buffer.toStdString());
@@ -19,8 +33,7 @@ void Client::readyRead()
     switch(m.type()){
     case 0: //Crear Sala
     {
-        QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("./database.sqlite");
+
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -57,8 +70,7 @@ void Client::readyRead()
         //TODO: ENVIAR AL SERVIDOR MI AVATAR
 
 
-        QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("./database.sqlite");
+
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -95,8 +107,7 @@ void Client::readyRead()
         //ENVIAR MENSAJE A UNA SALA
         //Reenviamos el mensaje a todos los usuarios de la sala
         //Metemos el mensaje en el historial
-        QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("./database.sqlite");
+
         QSqlQuery query(*db);
 
         int port = m.port();
@@ -124,8 +135,8 @@ void Client::readyRead()
             mensaje = m.SerializeAsString();
 
             if(!mensaje.empty()){
-                tcpSocket_->connectToHost(direccion, quint16(p));
-                tcpSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
+                sslSocket_->connectToHost(direccion, quint16(p));
+                sslSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
             }
 
         }
@@ -150,4 +161,8 @@ void Client::readyRead()
     default: break;
     }
 
+}
+
+void Client::error(){
+    qDebug() << "Error\n";
 }
