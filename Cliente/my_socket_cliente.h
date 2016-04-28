@@ -9,6 +9,7 @@
 #include <QHostInfo>
 #include <QList>
 #include <QNetworkInterface>
+#include <QCryptographicHash>
 
 #include "login.h"
 #include "protomessage.pb.h"
@@ -20,7 +21,9 @@ private:
     QSslSocket* sslSocket;//socket que vamos a utilizar
     QString username;
     QString password;
-    QString dir_ip;
+    QString ip_server;
+    quint16 server_port;
+
 
 public:
     explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd, QObject *parent = 0);
