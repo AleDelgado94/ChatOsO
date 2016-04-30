@@ -11,6 +11,8 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db ,QObject *parent) :
     connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(disconnected()), sslSocket_, SLOT(deleteLater()));
 
+    qDebug() << sslSocket_->peerAddress();
+
     if(!db->open()){
         qDebug() << "Error al abrir la base de datos";
         exit(1);
@@ -22,6 +24,7 @@ void Client::readyRead()
 {
     QByteArray Buffer;
     Buffer = sslSocket_->readAll();
+
 
     //TODO: IMPLEMENTAR EL DESERIALIZADO CON EL TAMAÑO DEL PAQUETE
 
@@ -135,6 +138,7 @@ void Client::readyRead()
 
             if(!mensaje.empty()){
                 sslSocket_->connectToHostEncrypted(direccion, quint16(p));
+                sslSocket_->waitForEncrypted(300000);
                 sslSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
                 sslSocket_->disconnectFromHost();
             }
@@ -205,6 +209,8 @@ void Client::firstConnection()
         query.bindValue(":user", QString::fromStdString(message.name_user()));
         query.bindValue(":puerto",port);
         query.exec();
+
+
 
         sslSocket_->write("OK");
     }else{
