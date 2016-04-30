@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     port = QString::fromStdString(port_option).toUInt();
 
     Server server(QString::fromStdString(ip_option), port);
-    server.run();
+    server.start();
 
 
     return a.exec();

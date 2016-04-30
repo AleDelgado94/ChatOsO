@@ -6,6 +6,7 @@
 #include <QtSql>
 #include <QSslSocket>
 #include <QSslError>
+#include <QHostAddress>
 
 
 #include "protomessage.pb.h"
@@ -22,6 +23,7 @@ signals:
 public slots:
     void readyRead();
     void error();
+    void firstConnection();
 
 private:
     //QTcpSocket *tcpSocket_;
@@ -30,7 +32,6 @@ private:
     QSqlDatabase* db;
     quintptr socketDescriptor;
     Message message;
-    Log log;
 
 };
 

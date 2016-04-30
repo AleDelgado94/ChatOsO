@@ -5,15 +5,15 @@
 #include <QSqlDatabase>
 #include <QSql>
 #include <QSqlDriver>
-#include "client.h"
+#include <iostream>
 #include "sslserver.h"
 
 class Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit Server(QString dir, quint16 port, QObject *parent = 0);
-    void run();
+    Server(QString dir, quint16 port, QObject *parent = 0);
+    void start();
 
 signals:
 
@@ -23,7 +23,6 @@ public slots:
 private:
     SslServer *servidor;
     QSqlDatabase *db;
-    QList<Client*> clients;
     QString dir_;
     quint16 port_;
 

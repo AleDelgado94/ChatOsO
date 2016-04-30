@@ -6,6 +6,7 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db ,QObject *parent) :
     db(db)
 {
     connect(sslSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(sslSocket_, SIGNAL(encrypted()), this, SLOT(firstConnection()));
     connect(sslSocket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(disconnected()), sslSocket_, SLOT(deleteLater()));
@@ -68,8 +69,6 @@ void Client::readyRead()
         //UNIRSE A UNA SALA YA CREADA
 
         //TODO: ENVIAR AL SERVIDOR MI AVATAR
-
-
 
         QSqlQuery query(*db);
 
@@ -135,8 +134,9 @@ void Client::readyRead()
             mensaje = m.SerializeAsString();
 
             if(!mensaje.empty()){
-                sslSocket_->connectToHost(direccion, quint16(p));
+                sslSocket_->connectToHostEncrypted(direccion, quint16(p));
                 sslSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
+                sslSocket_->disconnectFromHost();
             }
 
         }
@@ -148,8 +148,7 @@ void Client::readyRead()
         break;
     case 4:
     {
-        QSqlDatabase *db = new QSqlDatabase("QSQLITE");
-        db->setDatabaseName("./database.sqlite");
+
         QSqlQuery query(*db);
 
         //DESCONEXIÓN. ELIMINACION DE LA SALA
@@ -165,4 +164,52 @@ void Client::readyRead()
 
 void Client::error(){
     qDebug() << "Error\n";
+}
+
+void Client::firstConnection()
+{
+
+    //TODO: Deserializar con el tamaño del paquete al inicio
+
+    QByteArray buffer;
+    buffer = sslSocket_->readAll();
+    qDebug() << buffer;
+
+    Message_Log message;
+    message.ParseFromString(buffer.toStdString());
+
+
+    QSqlQuery query(*db);
+
+    query.prepare("SELECT * FROM login WHERE usuario=':user' "
+                  "AND password=':pass'");
+    query.bindValue(":user", QString::fromStdString(message.name_user()));
+    query.bindValue(":pass", QString::fromStdString(message.password()));
+
+    query.exec();
+
+    if(!query.value("usuario").toString().isEmpty()){
+        //SIGNIFICA QUE EL USUARIO ESTÁ EN LA BASE DE DATOS
+        //TODO: Enviar todas las fotos de los usuarios, mensaje OK
+
+        QHostAddress ip = sslSocket_->peerAddress();
+        quint16 port = sslSocket_->peerPort();
+
+        //METO EN LA BASE DE DATOS EL PUERTO Y LA DIRECCION
+        query.prepare("UPDATE login SET ip = ':dir_ip' WHERE usuario=':user'");
+        query.bindValue(":user", QString::fromStdString(message.name_user()));
+        query.bindValue(":dir_ip",ip.toString());
+        query.exec();
+
+        query.prepare("UPDATE login SET port=:puerto WHERE usuario=':user'");
+        query.bindValue(":user", QString::fromStdString(message.name_user()));
+        query.bindValue(":puerto",port);
+        query.exec();
+
+        sslSocket_->write("OK");
+    }else{
+        sslSocket_->disconnectFromHost();
+        sslSocket_->close();
+    }
+
 }
