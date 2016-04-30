@@ -33,3 +33,4 @@ FORMS    += login.ui \
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
+

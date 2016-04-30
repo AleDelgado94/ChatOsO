@@ -5,9 +5,38 @@
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
+#include <QSslSocket>
+#include <fstream>
+#include <QList>
+#include <cstring>
+#include <QSslCertificate>
+#include <QSslKey>
+#include <QFile>
+#include <QDebug>
+
+#include "protomessage.pb.h"
+#include "server.h"
+
 
 int main(int argc, char *argv[])
 {
+/*
+
+    pid_t pid;
+
+    pid = fork();
+
+    if(pid < 0){
+        std::cerr << std::strerror(errno) << '\n';
+        exit(10);
+    }
+
+    if(pid > 0){
+        exit(0);
+    }
+
+*/
+
     QCoreApplication a(argc, argv);
     QCoreApplication::setOrganizationName("ChatOsO");
     QCoreApplication::setOrganizationDomain("ChatOsO");
@@ -44,6 +73,13 @@ int main(int argc, char *argv[])
         }
     }
 
+    quint16 port;
+    port = QString::fromStdString(port_option).toUInt();
+
+    Server server(QString::fromStdString(ip_option), port);
+    server.start();
+
 
     return a.exec();
 }
+
