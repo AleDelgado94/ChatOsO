@@ -137,8 +137,8 @@ void Client::readyRead()
             mensaje = m.SerializeAsString();
 
             if(!mensaje.empty()){
-                //sslSocket_->connectToHostEncrypted(direccion, quint16(p));
-                sslSocket_->bind(QHostAddress(direccion), quint16(p));
+                sslSocket_->connectToHostEncrypted(direccion, quint16(p));
+                //sslSocket_->bind(QHostAddress(direccion), quint16(p));
                 //sslSocket_->waitForEncrypted(300000);
                 sslSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
                 //sslSocket_->disconnectFromHost();
