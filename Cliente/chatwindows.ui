@@ -44,6 +44,9 @@
      <height>231</height>
     </rect>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QPushButton" name="pushButtonDesconectar">
    <property name="geometry">

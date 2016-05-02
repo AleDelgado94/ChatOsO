@@ -1,7 +1,12 @@
 #ifndef CHATWINDOWS_H
 #define CHATWINDOWS_H
 
+#include "my_socket_cliente.h"
+#include "ventanaprincipal.h"
+
 #include <QDialog>
+#include <QProcess>
+#include <QMessageBox>
 
 namespace Ui {
 class ChatWindows;
@@ -10,6 +15,9 @@ class ChatWindows;
 class ChatWindows : public QDialog
 {
     Q_OBJECT
+
+private:
+    QString username;
 
 public:
     explicit ChatWindows(QWidget *parent = 0);
@@ -25,7 +33,7 @@ private slots:
 
 private:
     Ui::ChatWindows *ui;
-    bool isConnected_;
+    QProcess proceso_;
 };
 
 #endif // CHATWINDOWS_H

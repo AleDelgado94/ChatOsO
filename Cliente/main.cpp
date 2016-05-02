@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     //VentanaPrincipal v;
     //v.show();
 
-    //ChatWindows chat;
-    //chat.show();
+    ChatWindows chat;
+    chat.show();
 
 
 
