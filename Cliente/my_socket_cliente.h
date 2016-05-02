@@ -10,6 +10,7 @@
 #include <QList>
 #include <QNetworkInterface>
 #include <QCryptographicHash>
+#include <QAbstractSocket>
 
 #include "login.h"
 #include "protomessage.pb.h"
