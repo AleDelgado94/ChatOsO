@@ -19,6 +19,7 @@ void SslServer::incomingConnection(quintptr socketDescriptor){
 
     QSslSocket* socket = new QSslSocket();
 
+    qDebug() << "CHIVATO";
 
 
     if(socket->setSocketDescriptor(socketDescriptor)){
