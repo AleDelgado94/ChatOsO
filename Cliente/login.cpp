@@ -1,6 +1,5 @@
 #include "login.h"
 #include "ui_login.h"
-#include "my_socket_cliente.h"
 
 Login::Login(QWidget *parent) :
     QMainWindow(parent),
@@ -18,9 +17,9 @@ void Login::on_pushButtonEntrar_clicked()
 {
     QString username = ui->lineEditUsername->text();
     QString password = ui->lineEditPassword->text();
-    My_Socket_Cliente *mySslSockey = My_Socket_Cliente();
+    //My_Socket_Cliente *mySslSockey = My_Socket_Cliente();
 
-    if(usuario == username && usuario != "" ){
+/*    if(usuario == username && usuario != "" ){
 
         this->hide();
 
@@ -30,5 +29,5 @@ void Login::on_pushButtonEntrar_clicked()
     else{
         QMessageBox::critical(NULL, "Error", "Usuario no registrado");
     }
-
+*/
 }

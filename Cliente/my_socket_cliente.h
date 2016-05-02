@@ -24,10 +24,12 @@ private:
     QString password;
     QString ip_server;
     quint16 server_port;
+    QHostAddress my_ip;
+    quint16 my_port;
 
 
 public:
-    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd, QObject *parent = 0);
+    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QHostAddress mi_ip_address, quint16 mi_port_local, QString user_name, QString passwd, QObject *parent = 0);
 
 
 signals:

@@ -8,6 +8,9 @@
 #include <QMessageBox>
 #include <QProcess>
 
+#include "my_socket_cliente.h"
+
+
 namespace Ui {
 class Login;
 }

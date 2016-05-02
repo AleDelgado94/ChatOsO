@@ -1,15 +1,18 @@
 #include "my_socket_cliente.h"
 
 
-My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd ,QObject *parent) :
+My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QHostAddress mi_ip_address, quint16 mi_port_local, QString user_name, QString passwd ,QObject *parent) :
 
     QObject(parent),
     username(user_name),
     password(passwd),
     ip_server(dir_server),
-    server_port(port_server)
+    server_port(port_server),
+    my_ip("127.0.0.1"),
+    my_port(3003)
 {
     sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
+    sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
     sslSocket->connectToHostEncrypted(dir_server, port_server);
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
     connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
@@ -24,7 +27,7 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     QByteArray pass = password.toUtf8();
 
     //LISTA CON DIR DEL HOST
-    QList<QHostAddress> list = QNetworkInterface::allAddresses();
+    //QList<QHostAddress> list = QNetworkInterface::allAddresses();
 
     //NOMBRE DEL USUARIO
     message.set_name_user(username.toStdString());
@@ -35,8 +38,8 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     pass = QCryptographicHash::hash(password.toLocal8Bit(), QCryptographicHash::Md5);
 
     //INFORMACION SOBRE EL HOST
-    message.set_ip_user(list.at(2).toString().toStdString());//2: ip de la red en la que estamos incluida en nuestra lista list.
-    message.set_port_user(3000);//¿Como saber a  que puerto pertenezco cuando se abre el socket?
+    message.set_ip_user(my_ip.toString().toStdString());//list.at(2) 2-->porque es la dir de la subred en la lista
+    message.set_port_user(my_port);
 
     //SERIALIZAMOS
     mensaje = message.SerializeAsString();
