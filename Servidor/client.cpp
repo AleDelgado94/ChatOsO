@@ -1,6 +1,6 @@
 #include "client.h"
 
-Client::Client(QSslSocket *sslSocket, QSqlDatabase *db ,QObject *parent) :
+Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     QObject(parent),
     sslSocket_(sslSocket),
     db(db)
@@ -128,20 +128,22 @@ void Client::readyRead()
 
         query.exec(QString::fromStdString(usuarios_sala));
 
+        std::string mensaje;
+        mensaje = m.SerializeAsString();
+
         while(query.next()){
             //CONECTAMOS CON EL HOST Y LE ENVIAMOS LA INFORMACIÓN DEL MENSAJE QUE HEMOS RECIBIDO
             direccion = query.value("direccion").toString();
             p = query.value("puerto").toUInt();
 
-            std::string mensaje;
-            mensaje = m.SerializeAsString();
-
             if(!mensaje.empty()){
+
                 sslSocket_->connectToHostEncrypted(direccion, quint16(p));
                 //sslSocket_->bind(QHostAddress(direccion), quint16(p));
                 //sslSocket_->waitForEncrypted(300000);
                 sslSocket_->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
-                //sslSocket_->disconnectFromHost();
+                sslSocket_->waitForBytesWritten(30000);
+                sslSocket_->disconnectFromHost();
             }
 
         }
@@ -197,8 +199,11 @@ void Client::firstConnection()
         //SIGNIFICA QUE EL USUARIO ESTÁ EN LA BASE DE DATOS
         //TODO: Enviar todas las fotos de los usuarios, mensaje OK
 
-        QHostAddress ip = sslSocket_->peerAddress();
-        quint16 port = sslSocket_->peerPort();
+        QHostAddress ip(QString::fromStdString(message.ip_user()));
+
+        //QHostAddress ip = sslSocket_->peerAddress();
+        //quint16 port = sslSocket_->peerPort();
+        quint16 port = message.port_user();
 
         //METO EN LA BASE DE DATOS EL PUERTO Y LA DIRECCION
         query.prepare("UPDATE login SET ip = ':dir_ip' WHERE usuario=':user'");
