@@ -137,7 +137,6 @@ void Client::readyRead()
             p = query.value("puerto").toUInt();
 
             if(!mensaje.empty()){
-
                 sslSocket_->connectToHostEncrypted(direccion, quint16(p));
                 //sslSocket_->bind(QHostAddress(direccion), quint16(p));
                 //sslSocket_->waitForEncrypted(300000);
@@ -179,6 +178,7 @@ void Client::firstConnection()
     //TODO: Deserializar con el tamaño del paquete al inicio
 
     QByteArray buffer;
+    sslSocket_->waitForBytesWritten();
     buffer = sslSocket_->readAll();
     qDebug() << buffer;
 
