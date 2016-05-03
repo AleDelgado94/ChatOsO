@@ -1,7 +1,7 @@
 #include "my_socket_cliente.h"
 
 
-My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QHostAddress mi_ip_address, quint16 mi_port_local, QString user_name, QString passwd ,QObject *parent) :
+My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd ,QObject *parent) :
 
     QObject(parent),
     username(user_name),
@@ -9,7 +9,8 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QH
     ip_server(dir_server),
     server_port(port_server),
     my_ip("127.0.0.1"),
-    my_port(3003)
+    my_port(3003),
+    logeado(false)
 {
     sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
     sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
@@ -25,6 +26,7 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     std::string mensaje;
     Message_Log message;
     QByteArray pass = password.toUtf8();
+    QByteArray buffer;
 
     //LISTA CON DIR DEL HOST
     //QList<QHostAddress> list = QNetworkInterface::allAddresses();
@@ -46,6 +48,13 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
 
     //ENVIO
     sslSocket->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
+    sslSocket->waitForReadyRead(300000); //ESPERAMOS RESPUESTA DEL SERVIDOR(30sec)
+
+    //LEEMOS MENSAJE DEL SERVIDOR Y VEMOS SI PODEMOS ENTRAR O NO
+    buffer = sslSocket->readAll();
+     if(buffer == "OK")
+         logeado = true;
+
 
 }
 

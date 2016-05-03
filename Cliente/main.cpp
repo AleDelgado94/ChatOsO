@@ -2,7 +2,7 @@
 #include<QHostInfo>
 #include <QApplication>
 
-#include "login.h"
+#include "loginuser.h"
 #include "ventanaprincipal.h"
 #include "my_socket_cliente.h"
 //#include "protomessage.pb.h"
@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
     //Login w;
     //w.show();
 
-    //VentanaPrincipal v;
-    //v.show();
+    VentanaPrincipal v;
+    v.show();
 
-    ChatWindows chat;
-    chat.show();
+    //ChatWindows chat;
+    //chat.show();
 
 
 

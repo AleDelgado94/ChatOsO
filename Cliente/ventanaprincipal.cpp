@@ -1,15 +1,10 @@
-#include <QSettings>
-
 #include "ventanaprincipal.h"
-#include "perfil.h"
-#include "configure.h"
 #include "ui_ventanaprincipal.h"
-#include "chatwindows.h"
 
 VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::VentanaPrincipal),
-    isConnected_(false)
+    ui(new Ui::VentanaPrincipal)
+
 {
     ui->setupUi(this);
 
@@ -63,12 +58,23 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
 
 void VentanaPrincipal::on_pushButtonConectar_clicked()
 {
-    isConnected_=true;
-    this->hide();
-    ChatWindows chat;
-    chat.exec();
 
-    if(isConnected_){
-        //TODO:Crear socket y enviar primera estructura
+    bool conectarsala=false;
+    QString nombre_sala;
+    QSettings settings;
+
+    if(!ui->lineEditConectsalas->text().isEmpty()){
+       conectarsala=true;
     }
+    if(conectarsala){
+        nombre_sala = ui->lineEditConectsalas->text();
+    }
+    else
+        nombre_sala = ui->lineEditCrearsalas->text();
+
+
+    this->hide();
+    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala,conectarsala);
+    log.exec();
+
 }

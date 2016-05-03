@@ -12,13 +12,15 @@
 #include <QCryptographicHash>
 #include <QAbstractSocket>
 
-#include "login.h"
 #include "protomessage.pb.h"
 
 class My_Socket_Cliente : public QObject
 {
     Q_OBJECT
-private:
+
+public:
+    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd, QObject *parent = 0);
+    bool logeado;
     QSslSocket* sslSocket;//socket que vamos a utilizar
     QString username;
     QString password;
@@ -26,11 +28,6 @@ private:
     quint16 server_port;
     QHostAddress my_ip;
     quint16 my_port;
-
-
-public:
-    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QHostAddress mi_ip_address, quint16 mi_port_local, QString user_name, QString passwd, QObject *parent = 0);
-
 
 signals:
 
