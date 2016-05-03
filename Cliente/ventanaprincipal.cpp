@@ -1,15 +1,13 @@
-#include <QSettings>
-
 #include "ventanaprincipal.h"
-#include "perfil.h"
-#include "configure.h"
 #include "ui_ventanaprincipal.h"
 
 VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::VentanaPrincipal)
+
 {
     ui->setupUi(this);
+
 }
 
 VentanaPrincipal::~VentanaPrincipal()
@@ -56,4 +54,27 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
             ui->labelConectsalas->setDisabled(false);
             ui->lineEditConectsalas->setDisabled(false);
         }
+}
+
+void VentanaPrincipal::on_pushButtonConectar_clicked()
+{
+
+    bool conectarsala=false;
+    QString nombre_sala;
+    QSettings settings;
+
+    if(!ui->lineEditConectsalas->text().isEmpty()){
+       conectarsala=true;
+    }
+    if(conectarsala){
+        nombre_sala = ui->lineEditConectsalas->text();
+    }
+    else
+        nombre_sala = ui->lineEditCrearsalas->text();
+
+
+    this->hide();
+    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala,conectarsala);
+    log.exec();
+
 }

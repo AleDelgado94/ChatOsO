@@ -3,6 +3,12 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QSettings>
+
+#include "perfil.h"
+#include "configure.h"
+#include "loginuser.h"
+
 
 namespace Ui {
 class VentanaPrincipal;
@@ -27,8 +33,11 @@ private slots:
 
     void on_lineEditCrearsalas_textEdited();
 
+    void on_pushButtonConectar_clicked();
+
 private:
     Ui::VentanaPrincipal *ui;
+    //My_Socket_Cliente *mySocket;
 };
 
 #endif // VENTANAPRINCIPAL_H

@@ -6,6 +6,15 @@ message Message {
 //3 - Actualización del avatar
 //4 - Desconectar
 
+
+message Log{
+required string name_user = 1;
+required string password = 2;
+required string ip_user = 3;
+required uint32 port_user = 4;
+}
+
+
 required uint32 type = 1;
 required string username = 2;
 optional string salaname = 3;
@@ -13,4 +22,7 @@ required string ip = 4;
 optional string message = 5;
 required uint32 port = 6;
 optional bytes avatar = 7;
+optional Log login = 8;
 }
+
+

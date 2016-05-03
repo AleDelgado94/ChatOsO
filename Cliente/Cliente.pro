@@ -6,7 +6,7 @@
 
 QT       += core gui
 QT       += sql
-
+QT       += network
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -16,20 +16,28 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        login.cpp \
     perfil.cpp \
     ventanaprincipal.cpp \
-    configure.cpp
+    configure.cpp \
+    my_socket_cliente.cpp \
+    chatwindows.cpp \
+    loginuser.cpp
 
-HEADERS  += login.h \
+
+HEADERS  += \
     perfil.h \
     ventanaprincipal.h \
-    configure.h
+    configure.h \
+    my_socket_cliente.h \
+    chatwindows.h \
+    loginuser.h
 
-FORMS    += login.ui \
+FORMS    += \
     ventanaprincipal.ui \
     configure.ui \
-    perfil.ui
+    perfil.ui \
+    chatwindows.ui \
+    loginuser.ui
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
