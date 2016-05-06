@@ -8,13 +8,17 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     password(passwd),
     ip_server(dir_server),
     server_port(port_server),
-    my_ip("127.0.0.1"),
+    my_ip("127.0.0.2"),
     my_port(3003),
     logeado(false)
 {
+
     sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
     sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
+    sslSocket->setProtocol(QSsl::SslV3);
+    sslSocket->ignoreSslErrors();
     sslSocket->connectToHostEncrypted(dir_server, port_server);
+
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
     connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 

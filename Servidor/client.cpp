@@ -62,6 +62,27 @@ void Client::readyRead()
             std::string insertar_usuario = "INSERT INTO " + m.salaname() + " (usuario, puerto, direccion) VALUES (" + m.username() + ", " + puerto + ", " + m.ip() + ")";
             query.exec(QString::fromStdString(insertar_usuario));
             //TODO: Enviar X mensajes de la sala al usuario
+
+            query.prepare("SELECT TOP 10 usuario, mensaje FROM :nombre_tabla_mensaje ORDER BY id DESC");
+            query.bindValue(":nombre_tabla_mensaje", QString::fromStdString("MESSAGE_"+m.salaname()));
+            query.exec();
+
+            while(query.next()){
+                Message reenvio;
+                reenvio.set_message(query.value("mensaje").toString().toStdString());
+                reenvio.set_type(2);
+                reenvio.set_username(query.value("usuario").toString().toStdString());
+                reenvio.set_port(0); //NO ME IMPORTA EL PUERTO
+                reenvio.set_ip(""); //NO ME IMPORTA LA DIRECCIÓN
+
+                //SERIALIZAMOS EL MENSAJE
+                std::string message_reenvio = reenvio.SerializeAsString();
+
+                //ENVIAMOS LOS MENSAJES AL USUARIO
+                if(!message_reenvio.empty()){
+                    sslSocket_->write(message_reenvio.c_str(), qstrlen(message_reenvio.c_str()));
+                }
+            }
         }
 
     }
@@ -100,6 +121,27 @@ void Client::readyRead()
             std::string insertar_usuario = "INSERT INTO " + m.salaname() + " (usuario, puerto, direccion) VALUES (" + m.username() + ", " + puerto + ", " + m.ip() + ");";
             query.exec(QString::fromStdString(insertar_usuario));
             //TODO: Enviar X mensajes de la sala al usuario
+
+            query.prepare("SELECT TOP 10 usuario, mensaje FROM :nombre_tabla_mensaje ORDER BY id DESC");
+            query.bindValue(":nombre_tabla_mensaje", QString::fromStdString("MESSAGE_"+m.salaname()));
+            query.exec();
+
+            while(query.next()){
+                Message reenvio;
+                reenvio.set_message(query.value("mensaje").toString().toStdString());
+                reenvio.set_type(2);
+                reenvio.set_username(query.value("usuario").toString().toStdString());
+                reenvio.set_port(0); //NO ME IMPORTA EL PUERTO
+                reenvio.set_ip(""); //NO ME IMPORTA LA DIRECCIÓN
+
+                //SERIALIZAMOS EL MENSAJE
+                std::string message_reenvio = reenvio.SerializeAsString();
+
+                //ENVIAMOS LOS MENSAJES AL USUARIO
+                if(!message_reenvio.empty()){
+                    sslSocket_->write(message_reenvio.c_str(), qstrlen(message_reenvio.c_str()));
+                }
+            }
         }
     }
         break;
