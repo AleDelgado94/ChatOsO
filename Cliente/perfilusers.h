@@ -18,13 +18,15 @@ class PerfilUsers : public QDialog
 
 public:
     explicit PerfilUsers(QWidget *parent = 0);
-    ~PerfilUser();
+    ~PerfilUsers();
 
 public slots:
     void done(int r);
 
 private slots:
     void on_pushButtonSeleccion_clicked();
+
+    void on_pushButtonCamaraWeb_clicked();
 
 private:
     Ui::PerfilUsers *ui;
