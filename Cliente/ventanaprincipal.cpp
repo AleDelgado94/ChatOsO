@@ -17,7 +17,7 @@ VentanaPrincipal::~VentanaPrincipal()
 
 void VentanaPrincipal::on_pushButtonPerfil_clicked()
 {
-    Perfil perfil;
+    PerfilUsers perfil;
     perfil.exec();
 }
 

@@ -5,7 +5,7 @@
 #include <QProcess>
 #include <QSettings>
 
-#include "perfil.h"
+#include "perfilusers.h"
 #include "configure.h"
 #include "loginuser.h"
 

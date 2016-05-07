@@ -1,5 +1,5 @@
-#ifndef PERFILUSER_H
-#define PERFILUSER_H
+#ifndef PERFILUSERS_H
+#define PERFILUSERS_H
 
 #include <QDialog>
 #include <QFileDialog>
@@ -9,15 +9,15 @@
 
 
 namespace Ui {
-class PerfilUser;
+class PerfilUsers;
 }
 
-class PerfilUser : public QDialog
+class PerfilUsers : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PerfilUser(QWidget *parent = 0);
+    explicit PerfilUsers(QWidget *parent = 0);
     ~PerfilUser();
 
 public slots:
@@ -27,7 +27,7 @@ private slots:
     void on_pushButtonSeleccion_clicked();
 
 private:
-    Ui::PerfilUser *ui;
+    Ui::PerfilUsers *ui;
 };
 
-#endif // PERFILUSER_H
+#endif // PERFILUSERS_H
