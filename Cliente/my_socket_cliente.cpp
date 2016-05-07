@@ -8,8 +8,8 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     password(passwd),
     ip_server(dir_server),
     server_port(port_server),
-    my_ip("127.0.0.1"),
-    my_port(3003),
+    my_ip("127.0.0.1"), //Ver como cambiar la ip para segun el usuario
+    my_port(3003), //Siempre sera fijo
     logeado(false)
 {
     sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
@@ -58,7 +58,7 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
 
 }
 
-void My_Socket_Cliente::readyRead()//para cunado el servidor me reenvie los mensajes de otros user
+void My_Socket_Cliente::readyRead()//para cuando el servidor me reenvie los mensajes de otros user
 {
     Message sms;
     std::string mensaje;

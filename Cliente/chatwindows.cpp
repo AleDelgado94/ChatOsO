@@ -54,7 +54,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         message.set_message(mensaje.toStdString().c_str());
         message.set_salaname(namesala.toStdString());
         message.set_type(2);//Para saber el tipo del paquete
-
+        //message.set_avatar();
         //TODO3:Falta envio con avatares.message.set_avatar()
 
         //SERIALIZAMOS LA INFO

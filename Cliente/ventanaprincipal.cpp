@@ -59,7 +59,7 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
 void VentanaPrincipal::on_pushButtonConectar_clicked()
 {
 
-    bool conectarsala=false;
+    bool conectarsala=false; //
     QString nombre_sala;
     QSettings settings;
 
@@ -74,7 +74,7 @@ void VentanaPrincipal::on_pushButtonConectar_clicked()
 
 
     this->hide();
-    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala,conectarsala);
+    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala, conectarsala);
     log.exec();
 
 }

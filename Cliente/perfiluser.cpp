@@ -1,15 +1,9 @@
-#include <QFileDialog>
-#include <QtGlobal>
-#include <QMessageBox>
-#include <QSettings>
+#include "perfiluser.h"
+#include "ui_perfiluser.h"
 
-#include "perfil.h"
-#include "ui_perfil.h"
-
-
-Perfil::Perfil(QWidget *parent) :
+PerfilUser::PerfilUser(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Perfil)
+    ui(new Ui::PerfilUser)
 {
     ui->setupUi(this);
 
@@ -20,15 +14,14 @@ Perfil::Perfil(QWidget *parent) :
        ui->lineEditNameuser->setText(settings.value("Name-User", username).toString());
     else
        ui->lineEditNameuser->setText(settings.value("Name-User", "").toString());
-
 }
 
-Perfil::~Perfil()
+PerfilUser::~PerfilUser()
 {
     delete ui;
 }
 
-void Perfil::done(int r)
+void PerfilUser::done(int r)
 {
     if(r == QDialog::Accepted){
         if(ui->lineEditNameuser->text().isEmpty()){
@@ -44,16 +37,12 @@ void Perfil::done(int r)
 
             QDialog::done(r);
         }
-
-    }
-    else
+     else
         QDialog::done(r);
+
 }
 
-void Perfil::on_pushButtonSeleccion_clicked()
+void PerfilUser::on_pushButtonSeleccion_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this);
-
 }
-
-

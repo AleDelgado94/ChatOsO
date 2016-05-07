@@ -16,28 +16,28 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    perfil.cpp \
     ventanaprincipal.cpp \
     configure.cpp \
     my_socket_cliente.cpp \
     chatwindows.cpp \
-    loginuser.cpp
+    loginuser.cpp \
+    perfiluser.cpp
 
 
 HEADERS  += \
-    perfil.h \
     ventanaprincipal.h \
     configure.h \
     my_socket_cliente.h \
     chatwindows.h \
-    loginuser.h
+    loginuser.h \
+    perfiluser.h
 
 FORMS    += \
     ventanaprincipal.ui \
     configure.ui \
-    perfil.ui \
     chatwindows.ui \
-    loginuser.ui
+    loginuser.ui \
+    perfiluser.ui
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
