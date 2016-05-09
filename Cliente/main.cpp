@@ -25,8 +25,5 @@ int main(int argc, char *argv[])
     //ChatWindows chat;
     //chat.show();
 
-
-
-
     return a.exec();
 }

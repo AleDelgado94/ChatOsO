@@ -8,12 +8,13 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     password(passwd),
     ip_server(dir_server),
     server_port(port_server),
-    my_ip("127.0.0.1"), //Ver como cambiar la ip para segun el usuario
+    my_ip("127.0.0.2"), //Ver como cambiar la ip para segun el usuario
     my_port(3003), //Siempre sera fijo
     logeado(false)
 {
     sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
-    sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
+
+    //sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
     sslSocket->connectToHostEncrypted(dir_server, port_server);
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
     connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
@@ -48,7 +49,7 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
 
     //ENVIO
     sslSocket->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
-    sslSocket->waitForReadyRead(300000); //ESPERAMOS RESPUESTA DEL SERVIDOR(30sec)
+   //sslSocket->waitForReadyRead(300000); //ESPERAMOS RESPUESTA DEL SERVIDOR(30sec)
 
     //LEEMOS MENSAJE DEL SERVIDOR Y VEMOS SI PODEMOS ENTRAR O NO
     buffer = sslSocket->readAll();

@@ -6,6 +6,8 @@
 #include <QtGlobal>
 #include <QMessageBox>
 #include <QSettings>
+#include <QtMultimedia>
+#include <QtMultimediaWidgets>
 
 
 namespace Ui {

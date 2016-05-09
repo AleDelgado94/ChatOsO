@@ -1,6 +1,10 @@
 #include "perfilusers.h"
 #include "ui_perfilusers.h"
 
+#include <QList>
+#include <QCamera>
+
+
 PerfilUsers::PerfilUsers(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PerfilUsers)
@@ -53,4 +57,16 @@ void PerfilUsers::on_pushButtonSeleccion_clicked()
         ui->lineEditAvatar->setText(filename);
         ui->lineEditAvatar->setText(settings_imagen.value("Ruta_My_Avatar", filename).toString());
     }
+}
+
+void PerfilUsers::on_pushButtonCamaraWeb_clicked()
+{
+    QCamera* camera = new QCamera("/dev/video0"); //Creamos un objeto QCamera para capturar desde la camara web del pc
+    QCameraViewfinder* viewfinder = new QCameraViewfinder; //muestra al usuario lo que la camara esta capturando
+
+    viewfinder->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+    camera->setCaptureMode(QCamera::CaptureVideo);
+    camera->setCaptureMode(QCamera::CaptureViewfinder);
+    camera->start();
+    //QCameraInfo-->posible arreglo error camera
 }
