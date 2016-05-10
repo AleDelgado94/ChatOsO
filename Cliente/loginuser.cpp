@@ -22,9 +22,9 @@ void LoginUser::on_pushButtonEntrar_clicked()
     QString username = ui->lineEditUsername->text();
     QString password = ui->lineEditPassword->text();
     mySocket = new My_Socket_Cliente(ipserver_, portserver_, username, password);
-
+    mySocket->sslSocket->waitForReadyRead();
     if(mySocket->logeado == true ){
-
+        qDebug() << "entra al login";
         this->hide();
         ChatWindows chat(crearsala, namesala, mySocket);
         chat.exec();

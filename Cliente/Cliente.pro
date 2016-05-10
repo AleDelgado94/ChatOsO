@@ -8,6 +8,8 @@ QT       += core gui
 QT       += sql
 QT       += network
 
+PKGCONFIG += openssl
+
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

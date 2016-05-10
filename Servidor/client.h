@@ -8,8 +8,10 @@
 #include <QSslError>
 #include <QHostAddress>
 
-
 #include "protomessage.pb.h"
+
+
+static QMap<QSslSocket*, QString> list_clients;
 
 class Client : public QObject
 {
@@ -26,6 +28,8 @@ public slots:
     void firstConnection();
 
 private:
+
+
     //QTcpSocket *tcpSocket_;
     QSslSocket *sslSocket_;
     quint32 tamPacket;

@@ -31,6 +31,8 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
 
 void Server::start()
 {
-    servidor->listen(QHostAddress::AnyIPv4, port_);
+    //servidor->listen(dir_, port_);
+    servidor->listen(QHostAddress(dir_), port_);
     qDebug() << "Listening...";
+    qDebug() << "Port: " << port_;
 }

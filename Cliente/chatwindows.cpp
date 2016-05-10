@@ -92,8 +92,13 @@ void ChatWindows::on_pushButtonConectar_clicked()
      //SERIALIZAMOS LA INFO
      mensaje_envio = message.SerializeAsString();
 
+     qDebug() << QString::fromStdString(mensaje_envio);
+     qDebug() << mensaje_envio.size();
+     qDebug() << mensaje_envio.length();
+     //qDebug() << qstrlen(QString::fromStdString(mensaje_envio.c_str()));
+
      //ENVIO AL SERVIDOR
-     mySocket->sslSocket->write(mensaje_envio.c_str(), qstrlen(mensaje_envio.c_str()));
+     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
 
      isConnected=true;
     }

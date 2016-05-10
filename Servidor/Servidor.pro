@@ -3,6 +3,8 @@ QT -= gui
 QT += network
 QT += sql
 
+PKGCONFIG += openssl
+
 CONFIG += c++11
 
 TARGET = Servidor

@@ -34,6 +34,7 @@ signals:
 public slots:
     void ready();
     void readyRead();
+    void error();
 };
 
 #endif // MY_SOCKET_CLIENTE_H
