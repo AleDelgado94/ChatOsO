@@ -11,6 +11,8 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
 {
     ui->setupUi(this);
 
+    connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
     if(!isConnected){
        ui->plainTextEditrecive->setDisabled(true);
        ui->lineEditTexTenv->setDisabled(true);
@@ -61,7 +63,6 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         QString mensaje;
         Message message;
         std::string mensaje_envio;
-        QSettings setting;
 
         //Creacion del paquete
         mensaje = ui->lineEditTexTenv->text();
@@ -78,7 +79,10 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mensaje_envio = message.SerializeAsString();
 
         //ENVIO AL SERVIDOR
-        mySocket->sslSocket->write(mensaje_envio.c_str(), qstrlen(mensaje_envio.c_str()));
+        mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+        ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
+        ui->lineEditTexTenv->setText("");
+
     }
     else{
         QMessageBox::critical(NULL, "Error", "Campo de mensaje vacio");
@@ -91,7 +95,6 @@ void ChatWindows::on_pushButtonConectar_clicked()
     QString mensaje;
     Message message;
     std::string mensaje_envio;
-    QSettings setting;
     mensaje = ui->lineEditTexTenv->text();
     message.set_username(mySocket->username.toStdString());
     message.set_ip(mySocket->my_ip.toString().toStdString());
@@ -111,8 +114,32 @@ void ChatWindows::on_pushButtonConectar_clicked()
 
      //ENVIO AL SERVIDOR
      mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
-
+     ui->lineEditTexTenv->setEnabled(true);
      isConnected=true;
     }
+
+}
+
+void ChatWindows::readyRead()
+{
+    qDebug() << "Entrando mensaje";
+
+    Message sms;
+    QByteArray mensaje;
+    qDebug() << "Llega mensaje";
+
+    //TODO:leer mensaje que llega
+
+    mensaje = mySocket->sslSocket->readAll();
+    qDebug() << mensaje;
+    //TODO2:deserializar
+    sms.ParseFromString(mensaje.toStdString()); //guardamos en mensaje lo que deserializamos en sms.
+
+    if(sms.type() == 5){
+        mySocket->logeado = true;
+    }else if(sms.type() == 2){
+        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+    }
+
 
 }

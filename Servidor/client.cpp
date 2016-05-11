@@ -110,6 +110,7 @@ void Client::readyRead()
 
                 //SERIALIZAMOS EL MENSAJE
                 std::string message_reenvio = reenvio.SerializeAsString();
+                qDebug() << QString::fromStdString(message_reenvio);
 
                 //ENVIAMOS LOS MENSAJES AL USUARIO
                 if(!message_reenvio.empty()){
@@ -179,10 +180,11 @@ void Client::readyRead()
             qDebug() << "usuario: " << QString::fromStdString(m.username());
             //EL USUARIO SE UNIRÁ A LA SALA
             qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
-            qDebug() << query.lastError();
             //Enviar X mensajes de la sala al usuario
 
-            query.exec("SELECT TOP 10 usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC");
+            qDebug() << query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
+            qDebug() << query.lastError();
+            qDebug() << query.executedQuery();
 
             while(query.next()){
                 Message reenvio;
@@ -194,10 +196,13 @@ void Client::readyRead()
 
                 //SERIALIZAMOS EL MENSAJE
                 std::string message_reenvio = reenvio.SerializeAsString();
+                qDebug() << "MENSAJE A REENVIAR: " << QString::fromStdString(message_reenvio);
 
                 //ENVIAMOS LOS MENSAJES AL USUARIO
                 if(!message_reenvio.empty()){
+                    qDebug() << message_reenvio.length();
                     sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
+                    sslSocket_->waitForBytesWritten();
                 }
             }
         }
@@ -211,7 +216,6 @@ void Client::readyRead()
         //Reenviamos el mensaje a todos los usuarios de la sala
         //Metemos el mensaje en el historial
 
-        QSqlQuery query(*db);
 
         int port = m.port();
         std::string puerto;
@@ -231,17 +235,26 @@ void Client::readyRead()
 
         std::string mensaje;
         mensaje = m.SerializeAsString();
+        qDebug() << "El mensaje a reenviar es: " << QString::fromStdString(mensaje);
+
 
         while(query.next()){
             //CONECTAMOS CON EL HOST Y LE ENVIAMOS LA INFORMACIÓN DEL MENSAJE QUE HEMOS RECIBIDO
             usuario = query.value("usuario").toString();
+            qDebug() << "Reenvio a usuarios: " <<  usuario;
+            qDebug() << list_clients;
 
-
-            if(!mensaje.empty()){
-
+            if(!mensaje.empty() && usuario != ""){
                 QSslSocket *socket = list_clients.value(usuario);
+                qDebug() << socket;
+                qDebug() << m.type();
+                qDebug() << QString::fromStdString(m.username());
+                qDebug() << QString::fromStdString(m.message());
+                qDebug() << QString::fromStdString(m.salaname());
+                qDebug() << QString::fromStdString(m.ip());
+                qDebug() << m.port();
+                qDebug() << mensaje.length();
                 socket->write(mensaje.c_str(), mensaje.length());
-
             }
 
         }

@@ -17,12 +17,12 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     //sslSocket->ignoreSslErrors();
     sslSocket->setProtocol(QSsl::TlsV1_1);
     sslSocket->connectToHostEncrypted(ip_server, port_server);
-    qDebug() << sslSocket->socketDescriptor();
-    qDebug() << sslSocket->state();
+    //qDebug() << sslSocket->socketDescriptor();
+    //qDebug() << sslSocket->state();
 
     //connect(sslSocket, SIGNAL(connected()), this, SLOT(ready()));
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
-    connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    //connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(sslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(error()));
     //sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
@@ -93,7 +93,7 @@ void My_Socket_Cliente::readyRead()//para cunado el servidor me reenvie los mens
 
     if(sms.type() == 5){
         logeado = true;
-    }else{
+    }else if(sms.type() == 2){
 
     }
 

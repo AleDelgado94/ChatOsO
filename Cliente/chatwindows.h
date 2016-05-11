@@ -30,6 +30,8 @@ private slots:
 
     void on_pushButtonConectar_clicked();
 
+    void readyRead();
+
 private:
     Ui::ChatWindows *ui;
     bool isConnected;
