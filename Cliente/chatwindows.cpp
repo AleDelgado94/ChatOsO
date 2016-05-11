@@ -30,12 +30,14 @@ void ChatWindows::on_pushButtonDesconectar_clicked()
 
     mensaje = ui->lineEditTexTenv->text();
     message.set_username(mySocket->username.toStdString());
-    message.set_ip(mySocket->my_ip.toString().toStdString());
-    message.set_port(mySocket->my_port);
+    message.set_ip("");
+    message.set_port(0);
     message.set_type(4);
+    message.set_salaname(namesala.toStdString());
 
      //SERIALIZAMOS LA INFO
      mensaje_envio = message.SerializeAsString();
+     qDebug() << QString::fromStdString(mensaje_envio);
      mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
      mySocket->sslSocket->waitForBytesWritten();
      mySocket->sslSocket->disconnect();
