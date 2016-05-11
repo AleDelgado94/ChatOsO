@@ -8,6 +8,11 @@
 #include <QSettings>
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
+#include <QList>
+#include <QCamera>
+#include <QCameraInfo>
+#include <QWidget>
+#include <QCameraViewfinder>
 
 
 namespace Ui {

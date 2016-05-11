@@ -1,8 +1,7 @@
 #include "perfilusers.h"
 #include "ui_perfilusers.h"
 
-#include <QList>
-#include <QCamera>
+
 
 
 PerfilUsers::PerfilUsers(QWidget *parent) :
@@ -42,6 +41,7 @@ void PerfilUsers::done(int r)
             else
                 guardar.setValue("Ruta_My_Avatar", ui->lineEditAvatar->text());
 
+
             QDialog::done(r);
     }
     else
@@ -55,18 +55,29 @@ void PerfilUsers::on_pushButtonSeleccion_clicked()
 
     if(!filename.isNull()){
         ui->lineEditAvatar->setText(filename);
-        ui->lineEditAvatar->setText(settings_imagen.value("Ruta_My_Avatar", filename).toString());
+    }
+    else{
+        ui->lineEditAvatar->setText("./Imagenes/haaribo.jpeg");
     }
 }
 
 void PerfilUsers::on_pushButtonCamaraWeb_clicked()
 {
-    QCamera* camera = new QCamera("/dev/video0"); //Creamos un objeto QCamera para capturar desde la camara web del pc
-    QCameraViewfinder* viewfinder = new QCameraViewfinder; //muestra al usuario lo que la camara esta capturando
+    qDebug ()   << "entra";
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    foreach (const QCameraInfo &camerasInfo , cameras) {
+        if(camerasInfo.deviceName() == "/dev/video0"){
+            QCamera* camera = new QCamera(camerasInfo); //Creamos un objeto QCamera para capturar desde la camara web del pc
+            QCameraViewfinder* viewfinder = new QCameraViewfinder(); //muestra al usuario lo que la camara esta capturando
+            viewfinder->show();
+            viewfinder->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+            camera->setViewfinder(viewfinder);
+            camera->setCaptureMode(QCamera::CaptureVideo);
+            camera->setCaptureMode(QCamera::CaptureViewfinder);
+            camera->start();
+         }
+    }
 
-    viewfinder->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-    camera->setCaptureMode(QCamera::CaptureVideo);
-    camera->setCaptureMode(QCamera::CaptureViewfinder);
-    camera->start();
-    //QCameraInfo-->posible arreglo error camera
+
+
 }

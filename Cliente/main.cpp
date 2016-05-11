@@ -5,9 +5,7 @@
 #include "loginuser.h"
 #include "ventanaprincipal.h"
 #include "my_socket_cliente.h"
-//#include "protomessage.pb.h"
-#include "chatwindows.h"
-#include <QApplication>
+#include "protomessage.pb.h"
 #include "protomessage.pb.h"
 
 int main(int argc, char *argv[])
@@ -22,7 +20,9 @@ int main(int argc, char *argv[])
     VentanaPrincipal v;
     v.show();
 
-    //ChatWindows chat;
+
+
+    //ChatWindows chat();
     //chat.show();
 
     return a.exec();

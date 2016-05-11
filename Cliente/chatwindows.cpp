@@ -15,6 +15,8 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
        ui->plainTextEditrecive->setDisabled(true);
        ui->lineEditTexTenv->setDisabled(true);
     }
+
+    connect(mySocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
 ChatWindows::~ChatWindows()
@@ -24,17 +26,16 @@ ChatWindows::~ChatWindows()
 
 void ChatWindows::on_pushButtonDesconectar_clicked()
 {
-    qApp->quit();
+    this->hide();
+
+    VentanaPrincipal principalwindows;
+    principalwindows.exec();
 }
 
 
 void ChatWindows::on_pushButtonSalir_clicked()
 {
-
-    this->hide();
-
-    VentanaPrincipal principalwindows;
-    principalwindows.exec();
+        qApp->quit();
 }
 
 void ChatWindows::on_lineEditTexTenv_returnPressed()
@@ -98,4 +99,22 @@ void ChatWindows::on_pushButtonConectar_clicked()
      isConnected=true;
     }
 
+}
+
+void ChatWindows::readyRead(){//para leer los mensajes que me enviar el servidor
+
+        mySocket->sslSocket->readAll(); //Si leemos del servidor
+        Message message;
+        std::string mensaje;
+        std::string cout_mensaje;
+        //tipo_var cout_avatar;
+
+        //DESCERIALIZACION -->guardamos en mensaje lo que tenga message que lo enviar el server
+        message.ParseFromString(mensaje);
+        cout_mensaje = message.message();
+        //TODO:almacenar avatar y mostrar.
+        //cout_avatar = meesage.avatar()...
+
+        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(cout_mensaje));
+        //ui->plainTextEditrecive->appendPlainText(cout_avatar);
 }

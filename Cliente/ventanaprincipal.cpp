@@ -59,7 +59,7 @@ void VentanaPrincipal::on_lineEditCrearsalas_textEdited()
 void VentanaPrincipal::on_pushButtonConectar_clicked()
 {
 
-    bool conectarsala=false; //
+    bool conectarsala=false;
     QString nombre_sala;
     QSettings settings;
 

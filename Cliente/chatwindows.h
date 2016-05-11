@@ -20,6 +20,8 @@ public:
     explicit ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent = 0);
     ~ChatWindows();
 
+public slots:
+    void readyRead();
 
 private slots:
     void on_pushButtonDesconectar_clicked();

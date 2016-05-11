@@ -9,11 +9,11 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     ip_server(dir_server),
     server_port(port_server),
     my_ip("127.0.0.2"), //Ver como cambiar la ip para segun el usuario
-    my_port(3003), //Siempre sera fijo
+    //my_port(3003), //Siempre sera fijo
     logeado(false)
 {
-    sslSocket = new QSslSocket(this);//creamos el socket que vamos a usar
-
+    sslSocket = new QSslSocket();//creamos el socket que vamos a usar
+    sslSocket->setProtocol(QSsl::TlsV1_1);
     //sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
     sslSocket->connectToHostEncrypted(dir_server, port_server);
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
@@ -34,11 +34,11 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
 
     //NOMBRE DEL USUARIO
     message.set_name_user(username.toStdString());
-    //CONTRASEÑA DEL USUARIO
-    message.set_password(password.toStdString());
 
     //ENCRIPTACION DE LA CONTRASEÑA
     pass = QCryptographicHash::hash(password.toLocal8Bit(), QCryptographicHash::Md5);
+    //CONTRASEÑA DEL USUARIO
+    message.set_password(pass.toStdString());
 
     //INFORMACION SOBRE EL HOST
     message.set_ip_user(my_ip.toString().toStdString());//list.at(2) 2-->porque es la dir de la subred en la lista
@@ -57,6 +57,8 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
          logeado = true;
 
 
+
+
 }
 
 void My_Socket_Cliente::readyRead()//para cuando el servidor me reenvie los mensajes de otros user
@@ -71,8 +73,6 @@ void My_Socket_Cliente::readyRead()//para cuando el servidor me reenvie los mens
     sms.ParseFromString(mensaje); //guardamos en mensaje lo que deserializamos en sms.
 
     //TODO3:mostrar mensaje por pantalla
-
-
     //TODO4:Ir a la carpeta con avatares y mostrarlo
     //TODO5:envio de imagen Qbuffer
 }
