@@ -7,11 +7,14 @@
 #include <QSslSocket>
 #include <QSslError>
 #include <QHostAddress>
+#include <QSqlQuery>
+#include <QSqlDatabase>
+#include <QSqlDriver>
 
 #include "protomessage.pb.h"
 
 
-static QMap<QSslSocket*, QString> list_clients;
+static QMap<QString, QSslSocket*> list_clients;
 
 class Client : public QObject
 {
@@ -25,7 +28,7 @@ signals:
 public slots:
     void readyRead();
     void error();
-    void firstConnection();
+    //void firstConnection();
 
 private:
 

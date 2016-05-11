@@ -24,7 +24,22 @@ ChatWindows::~ChatWindows()
 
 void ChatWindows::on_pushButtonDesconectar_clicked()
 {
-    qApp->quit();
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
+
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip(mySocket->my_ip.toString().toStdString());
+    message.set_port(mySocket->my_port);
+    message.set_type(4);
+
+     //SERIALIZAMOS LA INFO
+     mensaje_envio = message.SerializeAsString();
+     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+     mySocket->sslSocket->waitForBytesWritten();
+     mySocket->sslSocket->disconnect();
+     qApp->exit();
 }
 
 
@@ -48,7 +63,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
 
         //Creacion del paquete
         mensaje = ui->lineEditTexTenv->text();
-        message.set_username(setting.value("Name-User").toString().toStdString());
+        message.set_username(mySocket->username.toStdString());
         message.set_ip(mySocket->my_ip.toString().toStdString());
         message.set_port(mySocket->my_port);
         message.set_message(mensaje.toStdString().c_str());
@@ -76,7 +91,7 @@ void ChatWindows::on_pushButtonConectar_clicked()
     std::string mensaje_envio;
     QSettings setting;
     mensaje = ui->lineEditTexTenv->text();
-    message.set_username(setting.value("Name-User").toString().toStdString());
+    message.set_username(mySocket->username.toStdString());
     message.set_ip(mySocket->my_ip.toString().toStdString());
     message.set_port(mySocket->my_port);
     message.set_message(mensaje.toStdString().c_str());
@@ -95,6 +110,11 @@ void ChatWindows::on_pushButtonConectar_clicked()
      qDebug() << QString::fromStdString(mensaje_envio);
      qDebug() << mensaje_envio.size();
      qDebug() << mensaje_envio.length();
+     qDebug() << QString::fromStdString(message.username());
+     qDebug() << message.port();
+     qDebug() << QString::fromStdString(message.message());
+     qDebug() << QString::fromStdString(message.salaname());
+     qDebug() << message.type();
      //qDebug() << qstrlen(QString::fromStdString(mensaje_envio.c_str()));
 
      //ENVIO AL SERVIDOR
