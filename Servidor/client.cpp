@@ -98,7 +98,7 @@ void Client::readyRead()
             qDebug() << query.lastError();
             //Enviar X mensajes de la sala al usuario
 
-            query.exec("SELECT TOP 10 usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC");
+            query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id LIMIT 10;");
 
             while(query.next()){
                 Message reenvio;
@@ -143,8 +143,6 @@ void Client::readyRead()
 
 
             qDebug() << "Creando tablas e insertando";
-            //query.prepare("CREATE TABLE :salaname (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL)");
-            //query.bindValue(":salaname", QString::fromStdString(m.salaname()));
             qDebug() << query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
             qDebug() << query.exec();
             qDebug() << query.executedQuery();
@@ -182,7 +180,7 @@ void Client::readyRead()
             qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
             //Enviar X mensajes de la sala al usuario
 
-            qDebug() << query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
+            qDebug() << query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id LIMIT 10;");
             qDebug() << query.lastError();
             qDebug() << query.executedQuery();
 
@@ -244,16 +242,13 @@ void Client::readyRead()
             qDebug() << "Reenvio a usuarios: " <<  usuario;
             qDebug() << list_clients;
 
-            if(!mensaje.empty() && usuario != ""){
+            bool envia = false;
+            if(list_clients.value(usuario))
+                envia = true;
+
+            if(!mensaje.empty() && envia){
                 QSslSocket *socket = list_clients.value(usuario);
-                qDebug() << socket;
-                qDebug() << m.type();
-                qDebug() << QString::fromStdString(m.username());
-                qDebug() << QString::fromStdString(m.message());
-                qDebug() << QString::fromStdString(m.salaname());
-                qDebug() << QString::fromStdString(m.ip());
-                qDebug() << m.port();
-                qDebug() << mensaje.length();
+
                 socket->write(mensaje.c_str(), mensaje.length());
             }
 
