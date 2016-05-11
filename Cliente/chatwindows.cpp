@@ -109,16 +109,6 @@ void ChatWindows::on_pushButtonConectar_clicked()
      //SERIALIZAMOS LA INFO
      mensaje_envio = message.SerializeAsString();
 
-     qDebug() << QString::fromStdString(mensaje_envio);
-     qDebug() << mensaje_envio.size();
-     qDebug() << mensaje_envio.length();
-     qDebug() << QString::fromStdString(message.username());
-     qDebug() << message.port();
-     qDebug() << QString::fromStdString(message.message());
-     qDebug() << QString::fromStdString(message.salaname());
-     qDebug() << message.type();
-     //qDebug() << qstrlen(QString::fromStdString(mensaje_envio.c_str()));
-
      //ENVIO AL SERVIDOR
      mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
 
