@@ -20,14 +20,16 @@ public:
 
 
 public slots:
+public:
+    void incomingConnection(qintptr socketDescriptor);
+    QTcpServer *server;
 
-protected:
-    void incomingConnection(quintptr socketDescriptor);
 private:
 
 
     QSqlDatabase* db;
-    QMap<Client*, quintptr> list_clients;
+
+    //QMap<Client*, quintptr> list_clients;
     QString dir_;
     quint16 port_;
 

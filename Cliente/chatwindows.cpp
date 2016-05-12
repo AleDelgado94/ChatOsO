@@ -11,6 +11,8 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
 {
     ui->setupUi(this);
 
+    connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
     if(!isConnected){
        ui->plainTextEditrecive->setDisabled(true);
        ui->lineEditTexTenv->setDisabled(true);
@@ -26,8 +28,26 @@ ChatWindows::~ChatWindows()
 
 void ChatWindows::on_pushButtonDesconectar_clicked()
 {
-    this->hide();
 
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
+
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip("");
+    message.set_port(0);
+    message.set_type(4);
+    message.set_salaname(namesala.toStdString());
+
+    //SERIALIZAMOS LA INFO
+    mensaje_envio = message.SerializeAsString();
+    qDebug() << QString::fromStdString(mensaje_envio);
+    mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+    mySocket->sslSocket->waitForBytesWritten();
+    mySocket->sslSocket->disconnect();
+
+    this->hide();
     VentanaPrincipal principalwindows;
     principalwindows.exec();
 }
@@ -35,7 +55,28 @@ void ChatWindows::on_pushButtonDesconectar_clicked()
 
 void ChatWindows::on_pushButtonSalir_clicked()
 {
-        qApp->quit();
+
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
+
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip("");
+    message.set_port(0);
+    message.set_type(4);
+    message.set_salaname(namesala.toStdString());
+
+     //SERIALIZAMOS LA INFO
+     mensaje_envio = message.SerializeAsString();
+     qDebug() << QString::fromStdString(mensaje_envio);
+     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+     mySocket->sslSocket->waitForBytesWritten();
+     mySocket->sslSocket->disconnect();
+
+     qApp->exit();
+
+
 }
 
 void ChatWindows::on_lineEditTexTenv_returnPressed()
@@ -45,11 +86,10 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         QString mensaje;
         Message message;
         std::string mensaje_envio;
-        QSettings setting;
 
         //Creacion del paquete
         mensaje = ui->lineEditTexTenv->text();
-        message.set_username(setting.value("Name-User").toString().toStdString());
+        message.set_username(mySocket->username.toStdString());
         message.set_ip(mySocket->my_ip.toString().toStdString());
         message.set_port(mySocket->my_port);
         message.set_message(mensaje.toStdString().c_str());
@@ -62,7 +102,10 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mensaje_envio = message.SerializeAsString();
 
         //ENVIO AL SERVIDOR
-        mySocket->sslSocket->write(mensaje_envio.c_str(), qstrlen(mensaje_envio.c_str()));
+        mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+        ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
+        ui->lineEditTexTenv->setText("");
+
     }
     else{
         QMessageBox::critical(NULL, "Error", "Campo de mensaje vacio");
@@ -75,9 +118,8 @@ void ChatWindows::on_pushButtonConectar_clicked()
     QString mensaje;
     Message message;
     std::string mensaje_envio;
-    QSettings setting;
     mensaje = ui->lineEditTexTenv->text();
-    message.set_username(setting.value("Name-User").toString().toStdString());
+    message.set_username(mySocket->username.toStdString());
     message.set_ip(mySocket->my_ip.toString().toStdString());
     message.set_port(mySocket->my_port);
     message.set_message(mensaje.toStdString().c_str());
@@ -94,8 +136,8 @@ void ChatWindows::on_pushButtonConectar_clicked()
      mensaje_envio = message.SerializeAsString();
 
      //ENVIO AL SERVIDOR
-     mySocket->sslSocket->write(mensaje_envio.c_str(), qstrlen(mensaje_envio.c_str()));
-
+     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+     ui->lineEditTexTenv->setEnabled(true);
      isConnected=true;
     }
 
@@ -117,4 +159,28 @@ void ChatWindows::readyRead(){//para leer los mensajes que me enviar el servidor
 
         ui->plainTextEditrecive->appendPlainText(QString::fromStdString(cout_mensaje));
         //ui->plainTextEditrecive->appendPlainText(cout_avatar);
+
+void ChatWindows::readyRead()
+{
+    qDebug() << "Entrando mensaje";
+
+    Message sms;
+    QByteArray mensaje;
+    qDebug() << "Llega mensaje";
+
+    //TODO:leer mensaje que llega
+
+    mensaje = mySocket->sslSocket->readAll();
+    qDebug() << mensaje;
+    //TODO2:deserializar
+    sms.ParseFromString(mensaje.toStdString()); //guardamos en mensaje lo que deserializamos en sms.
+
+    if(sms.type() == 5){
+        mySocket->logeado = true;
+    }else if(sms.type() == 2){
+        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+    }
+
+
+
 }
