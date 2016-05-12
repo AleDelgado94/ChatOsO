@@ -47,10 +47,18 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     message.set_username(username.toStdString());
     //message.set_name_user(username.toStdString());
 
+    QCryptographicHash *hash = new QCryptographicHash(QCryptographicHash::Md5);
+    hash->addData(pass);
+
+    QByteArray pass_encrypt = hash->result();
+
+
     //ENCRIPTACION DE LA CONTRASEÑA
-    pass = QCryptographicHash::hash(password.toLocal8Bit(), QCryptographicHash::Md5);
+    //pass = QCryptographicHash::hash(password.toLocal8Bit(), QCryptographicHash::Md5);
+
+    //qDebug() << QString::fromStdString(pass.toStdString());
     //CONTRASEÑA DEL USUARIO
-    message.set_ip(password.toStdString());
+    message.set_ip(pass_encrypt.toHex().toStdString());
     //message.set_password(password.toStdString());
 
 

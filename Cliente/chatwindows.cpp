@@ -37,23 +37,43 @@ void ChatWindows::on_pushButtonDesconectar_clicked()
     message.set_type(4);
     message.set_salaname(namesala.toStdString());
 
-     //SERIALIZAMOS LA INFO
-     mensaje_envio = message.SerializeAsString();
-     qDebug() << QString::fromStdString(mensaje_envio);
-     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
-     mySocket->sslSocket->waitForBytesWritten();
-     mySocket->sslSocket->disconnect();
-     qApp->exit();
+    //SERIALIZAMOS LA INFO
+    mensaje_envio = message.SerializeAsString();
+    qDebug() << QString::fromStdString(mensaje_envio);
+    mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+    mySocket->sslSocket->waitForBytesWritten();
+    mySocket->sslSocket->disconnect();
+
+    this->hide();
+    VentanaPrincipal principalwindows;
+    principalwindows.exec();
 }
 
 
 void ChatWindows::on_pushButtonSalir_clicked()
 {
 
-    this->hide();
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
 
-    VentanaPrincipal principalwindows;
-    principalwindows.exec();
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip("");
+    message.set_port(0);
+    message.set_type(4);
+    message.set_salaname(namesala.toStdString());
+
+     //SERIALIZAMOS LA INFO
+     mensaje_envio = message.SerializeAsString();
+     qDebug() << QString::fromStdString(mensaje_envio);
+     mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
+     mySocket->sslSocket->waitForBytesWritten();
+     mySocket->sslSocket->disconnect();
+
+     qApp->exit();
+
+
 }
 
 void ChatWindows::on_lineEditTexTenv_returnPressed()
