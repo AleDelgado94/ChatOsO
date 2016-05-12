@@ -160,27 +160,4 @@ void ChatWindows::readyRead(){//para leer los mensajes que me enviar el servidor
         ui->plainTextEditrecive->appendPlainText(QString::fromStdString(cout_mensaje));
         //ui->plainTextEditrecive->appendPlainText(cout_avatar);
 
-void ChatWindows::readyRead()
-{
-    qDebug() << "Entrando mensaje";
-
-    Message sms;
-    QByteArray mensaje;
-    qDebug() << "Llega mensaje";
-
-    //TODO:leer mensaje que llega
-
-    mensaje = mySocket->sslSocket->readAll();
-    qDebug() << mensaje;
-    //TODO2:deserializar
-    sms.ParseFromString(mensaje.toStdString()); //guardamos en mensaje lo que deserializamos en sms.
-
-    if(sms.type() == 5){
-        mySocket->logeado = true;
-    }else if(sms.type() == 2){
-        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
-    }
-
-
-
 }

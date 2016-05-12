@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     my_socket_cliente.cpp \
     chatwindows.cpp \
     loginuser.cpp \
-    perfilusers.cpp
+    perfilusers.cpp \
+    capturebuffer.cpp
 
 
 HEADERS  += \
@@ -35,7 +36,8 @@ HEADERS  += \
     my_socket_cliente.h \
     chatwindows.h \
     loginuser.h \
-    perfilusers.h
+    perfilusers.h \
+    capturebuffer.h
 
 FORMS    += \
     ventanaprincipal.ui \
