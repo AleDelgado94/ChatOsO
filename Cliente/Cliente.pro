@@ -26,8 +26,7 @@ SOURCES += main.cpp\
     my_socket_cliente.cpp \
     chatwindows.cpp \
     loginuser.cpp \
-    perfilusers.cpp \
-    capturebuffer.cpp
+    perfilusers.cpp
 
 
 HEADERS  += \
