@@ -3,7 +3,7 @@
 CaptureBuffer::CaptureBuffer(QCamera* camera):
     mycamera(camera)
 {
-    CaptureBuffer* capturebuffer = new CaptureBuffer;
+    CaptureBuffer* capturebuffer = new CaptureBuffer(camera);
     camera->setViewfinder(capturebuffer);
 
 }
@@ -11,8 +11,8 @@ CaptureBuffer::CaptureBuffer(QCamera* camera):
 //Este metodo nos dara el frame para que los mostremos
 bool CaptureBuffer::present(const QVideoFrame &frame)
 {
-    frame.map(QAbstractVideoBuffer::ReadOnly);
     QImage frameAsImage = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), QVideoFrame::imageFormatFromPixelFormat(frame.pixelFormat()));
+    frame.map(QAbstractVideoBuffer::ReadOnly);
     //TODO: Código para trabajar con frameAsImage
     frame.unmap();
     return true;

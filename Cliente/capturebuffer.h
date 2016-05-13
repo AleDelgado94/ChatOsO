@@ -18,7 +18,7 @@ private:
 public:
     CaptureBuffer(QCamera* camera);
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
-    bool present(const QVideoFrame &frame);
+    bool present(QVideoFrame &frame);
 };
 
 #endif // CAPTUREBUFFER_H
