@@ -3,9 +3,9 @@
 Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     QObject(parent),
     sslSocket_(sslSocket),
-    db(db)
+    db(db),
+    tamPacket(0)
 {
-
     qDebug() << "Creando Cliente";
 
     connect(sslSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
@@ -23,28 +23,41 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
 
 }
 
+Message Client::deserializar()
+{
+    QByteArray buffer;
+    Message paquete;
+
+    while(sslSocket_->bytesAvailable() > 0){
+
+             QDataStream in(sslSocket_);
+             in.setVersion(QDataStream::Qt_4_0);
+                 //Recojiendo en tamaño del paquete
+              if(sslSocket_->bytesAvailable() >= (int)(sizeof(qint32))&& (tamPacket==0))
+              {
+                  qDebug() << "Entra en ";
+                  in >> tamPacket;
+                  //Teniendo el tamaño de paquete lo leemos del buffer
+              } if ((tamPacket !=0) && (sslSocket_->bytesAvailable() >=tamPacket )){
+                 buffer=sslSocket_->read(tamPacket);
+                 paquete.ParseFromString(buffer.toStdString());
+                 tamPacket =0;
+
+
+             }else
+                sslSocket_->readAll();
+    }
+    return paquete;
+}
+
 void Client::readyRead()
 {
-    QSqlQuery query(*db);
-
-
-    qDebug() << "Ready read()";
-
-    QByteArray Buffer;
-
-
-    Buffer = sslSocket_->readAll();
-    qDebug() << Buffer;
-
-
-    //TODO: IMPLEMENTAR EL DESERIALIZADO CON EL TAMAÑO DEL PAQUETE
-
-
-
     Message m;
-    m.ParseFromString(Buffer.toStdString());
-    qDebug() << QString::fromStdString(m.username());
 
+    m = deserializar();
+
+    qDebug() << "El tamaño del paquete es: " << tamPacket;
+    QSqlQuery query(*db);
 
     switch(m.type()){
     case 0: //Crear Sala
@@ -108,13 +121,31 @@ void Client::readyRead()
                 reenvio.set_port(0); //NO ME IMPORTA EL PUERTO
                 reenvio.set_ip(""); //NO ME IMPORTA LA DIRECCIÓN
 
+
+                //SERIALIZAMOS LA INFO
+                std::string mensaje_envio = reenvio.SerializeAsString();
+
+                QByteArray pkt(mensaje_envio.c_str(), mensaje_envio.size());
+                //ENVIO del tamaño y paquete
+                quint32 size_packet = pkt.size();
+                QByteArray envio;
+                QDataStream env(&envio, QIODevice::WriteOnly);
+                env.setVersion(7);
+                env << (quint32)size_packet;
+
+
+
                 //SERIALIZAMOS EL MENSAJE
-                std::string message_reenvio = reenvio.SerializeAsString();
-                qDebug() << QString::fromStdString(message_reenvio);
+                //std::string message_reenvio = reenvio.SerializeAsString();
+                //qDebug() << QString::fromStdString(message_reenvio);
 
                 //ENVIAMOS LOS MENSAJES AL USUARIO
-                if(!message_reenvio.empty()){
-                    sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
+                if(!mensaje_envio.empty()){
+                    //sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
+                    //ENVIO a los clientes
+                    sslSocket_->write(envio);
+                    sslSocket_->write(pkt);
+                    sslSocket_->waitForBytesWritten();
                 }
             }
         }
@@ -192,15 +223,31 @@ void Client::readyRead()
                 reenvio.set_port(0); //NO ME IMPORTA EL PUERTO
                 reenvio.set_ip(""); //NO ME IMPORTA LA DIRECCIÓN
 
+                //SERIALIZAMOS LA INFO
+                std::string mensaje_envio = reenvio.SerializeAsString();
+
+                QByteArray pkt(mensaje_envio.c_str(), mensaje_envio.size());
+                //ENVIO del tamaño y paquete
+                quint32 size_packet = pkt.size();
+                QByteArray envio;
+                QDataStream env(&envio, QIODevice::WriteOnly);
+                env.setVersion(7);
+                env << (quint32)size_packet;
+
+
+
                 //SERIALIZAMOS EL MENSAJE
-                std::string message_reenvio = reenvio.SerializeAsString();
-                qDebug() << "MENSAJE A REENVIAR: " << QString::fromStdString(message_reenvio);
+                //std::string message_reenvio = reenvio.SerializeAsString();
+                //qDebug() << QString::fromStdString(message_reenvio);
 
                 //ENVIAMOS LOS MENSAJES AL USUARIO
-                if(!message_reenvio.empty()){
-                    qDebug() << message_reenvio.length();
-                    sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
+                if(!mensaje_envio.empty()){
+                    //sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
+                    //ENVIO a los clientes
+                    sslSocket_->write(envio);
+                    sslSocket_->write(pkt);
                     sslSocket_->waitForBytesWritten();
+
                 }
             }
         }
@@ -235,12 +282,19 @@ void Client::readyRead()
         mensaje = m.SerializeAsString();
         qDebug() << "El mensaje a reenviar es: " << QString::fromStdString(mensaje);
 
+        QByteArray pkt(mensaje.c_str(), mensaje.size());
+        //ENVIO del tamaño y paquete
+        quint32 size_packet = pkt.size();
+        QByteArray envio;
+        QDataStream env(&envio, QIODevice::WriteOnly);
+        env.setVersion(7);
+        env << (quint32)size_packet;
+
+
 
         while(query.next()){
             //CONECTAMOS CON EL HOST Y LE ENVIAMOS LA INFORMACIÓN DEL MENSAJE QUE HEMOS RECIBIDO
             usuario = query.value("usuario").toString();
-            qDebug() << "Reenvio a usuarios: " <<  usuario;
-            qDebug() << list_clients;
 
             bool envia = false;
             if(list_clients.value(usuario))
@@ -249,7 +303,8 @@ void Client::readyRead()
             if(!mensaje.empty() && envia){
                 QSslSocket *socket = list_clients.value(usuario);
 
-                socket->write(mensaje.c_str(), mensaje.length());
+                socket->write(envio);
+                socket->write(pkt);
             }
 
         }
@@ -262,25 +317,17 @@ void Client::readyRead()
     case 4:
     {
 
-
         //DESCONEXIÓN. ELIMINACION DE LA SALA
-
 
         qDebug() << query.exec("DELETE FROM " + QString::fromStdString(m.salaname()) + " where usuario='" + QString::fromStdString(m.username()) + "';");
         sslSocket_->disconnect();
         list_clients.remove(QString::fromStdString(m.username()));
-        qDebug() << list_clients;
 
     }
         break;
     case 5:
     {
 
-        qDebug() << "Logeandose";
-        qDebug() << Buffer;
-
-        qDebug() << "Usuario: " << QString::fromStdString(m.username());
-        qDebug() << "Pass: " << QString::fromStdString(m.ip());
 
         QSqlQuery query(*db);
 
@@ -300,10 +347,21 @@ void Client::readyRead()
                 std::string message_confirm;
                 message_confirm = confirmacion.SerializeAsString();
 
-                if(!message_confirm.empty())
-                    sslSocket_->write(message_confirm.c_str(), qstrlen(message_confirm.c_str()));
+                QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                //ENVIO del tamaño y paquete
+                quint32 size_packet = pkt.size();
+                QByteArray envio;
+                QDataStream env(&envio, QIODevice::WriteOnly);
+                env.setVersion(7);
+                env << (quint32)size_packet;
 
-                list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+
+
+                if(!message_confirm.empty()){
+                    sslSocket_->write(envio);
+                    sslSocket_->write(pkt);
+                    list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+                }
                 qDebug() << list_clients;
             }else{
                 sslSocket_->disconnectFromHost();

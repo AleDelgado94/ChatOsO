@@ -13,29 +13,31 @@
 #include <QSslKey>
 #include <QFile>
 #include <QDebug>
+#include <unistd.h>
+#include <errno.h>
+#include <pwd.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <grp.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <syslog.h>
 
 #include "protomessage.pb.h"
 #include "server.h"
 
 
+void signal_handler(int sig){
+    switch(sig){
+    case SIGTERM:
+        syslog(LOG_ERR, "Interceptada señal SIGTERM");
+        exit(0);
+        break;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-/*
-
-    pid_t pid;
-
-    pid = fork();
-
-    if(pid < 0){
-        std::cerr << std::strerror(errno) << '\n';
-        exit(10);
-    }
-
-    if(pid > 0){
-        exit(0);
-    }
-
-*/
 
     QCoreApplication a(argc, argv);
     QCoreApplication::setOrganizationName("ChatOsO");
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
 
     QSettings settings;
 
+    bool demonio = false;
 
 
     int op;
@@ -60,12 +63,13 @@ int main(int argc, char *argv[])
 
     }else{
 
-        while( (op = getopt(argc, argv, "s:p:01")) != -1){
+        while( (op = getopt(argc, argv, "ds:p:01")) != -1){
             switch (op){
                 case '0':
                 case '1': break;
                 case 's': ip_option = std::string(optarg); break;
                 case 'p': port_option = std::string(optarg); break;
+                case 'd': demonio = true; break;
                 case '?': break;
                 default: std::fprintf(stderr, "?? getopt devolvio codigo de error 0%o ??\n", op);
 
@@ -73,13 +77,91 @@ int main(int argc, char *argv[])
         }
     }
 
-    quint16 port;
-    port = QString::fromStdString(port_option).toUInt();
+    if(!demonio){
+        quint16 port;
+        port = QString::fromStdString(port_option).toUInt();
 
-    Server server(QString::fromStdString(ip_option), port);
-    server.start();
+        Server server(QString::fromStdString(ip_option), port);
+        server.start();
 
 
-    return a.exec();
+        return a.exec();
+    }
+    else{
+        //SERVIDOR EJECUTANDO EN MODO DEMONIO
+
+        pid_t pid;
+
+        pid = fork();
+        //fork() falló
+        if(pid < 0){
+            std::cerr << std::strerror(errno) << '\n';
+            exit(10);
+        }
+
+        //PROCESO PADRE
+        if(pid > 0){
+            exit(0);
+        }
+
+        //A partir de este punto, estamos en el proceso hijo
+
+        umask(0);
+        close(STDIN_FILENO);    //fd 0
+        close(STDOUT_FILENO);   //fd 1
+        close(STDERR_FILENO);   //fd 2
+
+        int fd0 = open("/dev/null", O_RDONLY);  //fd0 == 0
+        int fd1 = open("/dev/null", O_WRONLY);  //fd1 == 1
+        int fd2 = open("/dev/null", O_WRONLY);  //fd2 == 2
+
+
+        //Abrir conexión demonio syslog
+        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+
+        //Enviar paquete al demonio syslog
+        syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
+
+        /*pid_t sid;
+
+        sid = setsid();
+        if(sid < 0){
+            syslog(LOG_ERR, "No fue posible crear una nueva sesión\n");
+            exit(11);
+        }
+        if((chdir("/")) < 0){
+            syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
+            exit(12);
+        }
+
+        passwd* user = getpwnam("midemonio");
+        seteuid(user->pw_uid);
+
+        group* group_ = getgrnam("midemonio");
+        setegid(group_->gr_gid);
+
+        if(group_ != NULL){
+            if(setegid(group_->gr_gid) != 0){
+                syslog(LOG_ERR, "Error en setegid");
+                exit(13);
+            }
+        }*/
+
+
+        quint16 port;
+        port = QString::fromStdString(port_option).toUInt();
+
+        Server server(QString::fromStdString(ip_option), port);
+        server.start();
+        signal(SIGTERM, signal_handler);
+
+
+        return a.exec();
+
+
+        closelog();
+    }
+
+
 }
 

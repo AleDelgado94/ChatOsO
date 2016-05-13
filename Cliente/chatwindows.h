@@ -19,6 +19,7 @@ class ChatWindows : public QDialog
 public:
     explicit ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent = 0);
     ~ChatWindows();
+    Message deserializar();
 
 public slots:
     void readyRead();
@@ -36,6 +37,7 @@ private:
     Ui::ChatWindows *ui;
     bool isConnected;
     bool crearsala_;
+    quint32 tamPacket;
     QString namesala;
     My_Socket_Cliente *mySocket;
 
