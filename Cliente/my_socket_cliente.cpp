@@ -1,6 +1,6 @@
 #include "my_socket_cliente.h"
 #include <QSslError>
-
+#include <QDataStream>
 
 My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd ,QObject *parent) :
 
@@ -70,17 +70,17 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     //SERIALIZAMOS
     mensaje = message.SerializeAsString();
 
-    qDebug() << QString::fromStdString(mensaje);
 
-    //ENVIO
+    QByteArray pkt(mensaje.c_str(), mensaje.size());
+    //ENVIO del tamaño y paquete
+    quint32 size_packet = pkt.size();
+    QByteArray envio;
+    QDataStream env(&envio, QIODevice::WriteOnly);
+    env.setVersion(7);
+    env << (quint32)size_packet;
 
-    sslSocket->write(mensaje.c_str(), qstrlen(mensaje.c_str()));
-    //sslSocket->waitForReadyRead(300000); //ESPERAMOS RESPUESTA DEL SERVIDOR(30sec)
-
-    //LEEMOS MENSAJE DEL SERVIDOR Y VEMOS SI PODEMOS ENTRAR O NO
-    //buffer = sslSocket->readAll();
-     //if(buffer == "OK")
-       //  logeado = true;
+    sslSocket->write(envio);
+    sslSocket->write(pkt);
 
 
 }
@@ -105,11 +105,6 @@ void My_Socket_Cliente::readyRead()//para cunado el servidor me reenvie los mens
 
     }
 
-    //TODO3:mostrar mensaje por pantalla
-
-
-    //TODO4:Ir a la carpeta con avatares y mostrarlo
-    //TODO5:envio de imagen Qbuffer
 }
 
 void My_Socket_Cliente::error(){

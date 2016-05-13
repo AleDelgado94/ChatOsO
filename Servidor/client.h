@@ -10,6 +10,8 @@
 #include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QSqlDriver>
+#include <QPaintDevice>
+#include <QDataStream>
 
 #include "protomessage.pb.h"
 
@@ -21,7 +23,7 @@ class Client : public QObject
     Q_OBJECT
 public:
     explicit Client(QSslSocket* sslSocket, QSqlDatabase *db , QObject *parent = 0);
-
+    Message deserializar();
 
 signals:
 
