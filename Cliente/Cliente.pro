@@ -7,6 +7,7 @@
 QT       += core gui
 QT       += sql
 QT       += network
+QT       += multimedia multimediawidgets
 
 PKGCONFIG += openssl
 

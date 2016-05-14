@@ -1,5 +1,11 @@
 #include "chatwindows.h"
 #include "ui_chatwindows.h"
+#include <QImage>
+#include <QPaintDevice>
+#include <QLabel>
+#include <QImageWriter>
+#include <QPixmap>
+#include <QBuffer>
 
 ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent) :
     QDialog(parent),
@@ -46,6 +52,7 @@ Message ChatWindows::deserializar()
 
              }else
                 mySocket->sslSocket->readAll();
+
     }
     return paquete;
 }
@@ -154,6 +161,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->write(envio);
         mySocket->sslSocket->write(pkt);
 
+
         ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
         ui->lineEditTexTenv->setText("");
 
@@ -219,6 +227,27 @@ void ChatWindows::readyRead()
     sms = deserializar();
 
     if(sms.type() == 5){
+
+        QBuffer* buffer = new QBuffer;
+        buffer->open(QIODevice::ReadWrite);
+        QByteArray b;
+        quint64 bytes = buffer->write(QByteArray::fromBase64(sms.avatar().data()));
+        qDebug() << sms.avatar().data();
+
+        buffer->seek(buffer->pos() - bytes);
+        QImage image;
+        qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+
+
+        QString ruta("../Cliente/Images/");
+        ruta +=  QString::fromStdString(sms.username());
+        qDebug() << ruta;
+        QImageWriter img(ruta, "jpg");
+
+        img.write(image);
+        //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
+        //qDebug() << "El tamaño del avatar es de: " << avatar.size();
+
         mySocket->logeado = true;
     }else if(sms.type() == 2){
         ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));

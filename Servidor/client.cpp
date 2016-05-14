@@ -1,4 +1,6 @@
 #include "client.h"
+#include <iostream>
+#include <QDirIterator>
 
 Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     QObject(parent),
@@ -9,8 +11,6 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     qDebug() << "Creando Cliente";
 
     connect(sslSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    //connect(sslSocket_, SIGNAL(connected()), this, SLOT(firstConnection()));
-    //connect(sslSocket_, SIGNAL(encrypted()), this, SLOT(firstConnection()));
     connect(sslSocket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), sslSocket_, SLOT(ignoreSslErrors()));
     connect(sslSocket_, SIGNAL(disconnected()), sslSocket_, SLOT(deleteLater()));
@@ -32,12 +32,9 @@ Message Client::deserializar()
 
              QDataStream in(sslSocket_);
              in.setVersion(QDataStream::Qt_4_0);
-                 //Recojiendo en tamaño del paquete
               if(sslSocket_->bytesAvailable() >= (int)(sizeof(qint32))&& (tamPacket==0))
               {
-                  qDebug() << "Entra en ";
                   in >> tamPacket;
-                  //Teniendo el tamaño de paquete lo leemos del buffer
               } if ((tamPacket !=0) && (sslSocket_->bytesAvailable() >=tamPacket )){
                  buffer=sslSocket_->read(tamPacket);
                  paquete.ParseFromString(buffer.toStdString());
@@ -56,7 +53,6 @@ void Client::readyRead()
 
     m = deserializar();
 
-    qDebug() << "El tamaño del paquete es: " << tamPacket;
     QSqlQuery query(*db);
 
     switch(m.type()){
@@ -329,6 +325,7 @@ void Client::readyRead()
     {
 
 
+
         QSqlQuery query(*db);
 
         QString consulta =  "SELECT * FROM login WHERE usuario='" + QString::fromStdString(m.username()) +  "'  AND password='" + QString::fromStdString(m.ip()) + "';";
@@ -338,31 +335,58 @@ void Client::readyRead()
         while(query.next()){
             if(!query.value("usuario").toString().isEmpty()){
 
-                Message confirmacion;
-                confirmacion.set_username("");
-                confirmacion.set_ip("");
-                confirmacion.set_type(5);
-                confirmacion.set_port(0);
+                QDirIterator dirIt("../Servidor/Images", QDirIterator::Subdirectories);
+                qDebug() << dirIt.path();
+                while(dirIt.hasNext()){
+                    dirIt.next();
+                    if(QFileInfo(dirIt.filePath()).isFile())
 
-                std::string message_confirm;
-                message_confirm = confirmacion.SerializeAsString();
+                        if(QFileInfo(dirIt.filePath()).suffix() == "jpg" || QFileInfo(dirIt.filePath()).suffix() == "jpeg" )
+                        {
+                            qDebug() << "Entra aquí";
+                            QString ruta = "../Servidor/Images/" + dirIt.fileName();
+                            avatar = new QImage();
+                            avatar->load(ruta, "JPG");
+                            qDebug() << ruta;
+                            QByteArray ba;
+                            QBuffer buffer(&ba);
+                            avatar->save(&buffer, "JPG");
 
-                QByteArray pkt(message_confirm.c_str(), message_confirm.size());
-                //ENVIO del tamaño y paquete
-                quint32 size_packet = pkt.size();
-                QByteArray envio;
-                QDataStream env(&envio, QIODevice::WriteOnly);
-                env.setVersion(7);
-                env << (quint32)size_packet;
+
+                            Message confirmacion;
+                            confirmacion.set_username(dirIt.fileName().toStdString());
+                            confirmacion.set_ip("");
+                            confirmacion.set_type(5);
+                            confirmacion.set_port(0);
+                            confirmacion.set_avatar(ba.toBase64().data());
+
+
+                            std::string message_confirm;
+                            message_confirm = confirmacion.SerializeAsString();
+
+                            QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                            //ENVIO del tamaño y paquete
+                            quint32 size_packet = pkt.size();
+                            QByteArray envio;
+                            QDataStream env(&envio, QIODevice::WriteOnly);
+                            env.setVersion(7);
+                            env << (quint32)size_packet;
+
+                            qDebug() << message_confirm.size() ;
 
 
 
-                if(!message_confirm.empty()){
-                    sslSocket_->write(envio);
-                    sslSocket_->write(pkt);
-                    list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+                            if(!message_confirm.empty()){
+                                sslSocket_->write(envio);
+                                sslSocket_->write(pkt);
+                                sslSocket_->waitForBytesWritten();
+                                list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+                            }
+                            qDebug() << list_clients;
+                        }
                 }
-                qDebug() << list_clients;
+
+
             }else{
                 sslSocket_->disconnectFromHost();
                 sslSocket_->close();

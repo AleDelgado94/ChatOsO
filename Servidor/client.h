@@ -12,6 +12,7 @@
 #include <QSqlDriver>
 #include <QPaintDevice>
 #include <QDataStream>
+#include <QImageReader>
 
 #include "protomessage.pb.h"
 
@@ -41,7 +42,8 @@ private:
     QSqlDatabase* db;
     quintptr socketDescriptor;
     Message message;
-
+    QImage* avatar;
+    QImageReader reader;
 };
 
 #endif // CLIENT_H
