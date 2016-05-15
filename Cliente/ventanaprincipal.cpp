@@ -74,7 +74,7 @@ void VentanaPrincipal::on_pushButtonConectar_clicked()
 
 
     this->hide();
-    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala, conectarsala);
+    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala, conectarsala, settings.value("Ruta_My_Avatar"));
     log.exec();
 
 }
