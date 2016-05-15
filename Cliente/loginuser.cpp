@@ -7,9 +7,10 @@ LoginUser::LoginUser(QString ip_server, quint16 port_server ,QString sala, bool 
     ipserver_(ip_server),
     portserver_(port_server),
     namesala(sala),
-    crearsala(crear_sala)
+    crearsala(crear_sala),
 {
     ui->setupUi(this);
+
 }
 
 LoginUser::~LoginUser()

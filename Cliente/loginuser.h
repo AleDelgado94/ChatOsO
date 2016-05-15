@@ -33,7 +33,6 @@ private:
     quint16 portserver_;
     QString namesala;
     bool crearsala;
-    //avatar
 };
 
 #endif // LOGINUSER_H

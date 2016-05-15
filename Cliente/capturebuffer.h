@@ -7,7 +7,6 @@
 #include <QCamera>
 #include <QImage>
 
-#include "perfilusers.h"
 
 class CaptureBuffer : public QAbstractVideoSurface
 {
@@ -40,7 +39,7 @@ public:
         //Código para trabajar con frameAsImage
         frameAsImage.copy();
         emit s_image(frameAsImage);
-        frame.unmap();
+        frame2.unmap();
 
 
         return true;

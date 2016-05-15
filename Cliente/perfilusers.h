@@ -8,12 +8,17 @@
 #include <QSettings>
 #include <QtMultimedia>
 #include <QtMultimediaWidgets>
-#include <QList>
-#include <QCamera>
 #include <QCameraInfo>
 #include <QWidget>
 #include <QCameraViewfinder>
 
+
+#include "capturebuffer.h"
+
+struct CAM{
+    QCamera *Camera = NULL;
+    CaptureBuffer *capturebuffer = NULL;
+};
 
 namespace Ui {
 class PerfilUsers;
@@ -34,6 +39,10 @@ private slots:
     void on_pushButtonSeleccion_clicked();
 
     void on_pushButtonCamaraWeb_clicked();
+
+    void image_s(const QImage &imagen);
+
+
 
 private:
     Ui::PerfilUsers *ui;

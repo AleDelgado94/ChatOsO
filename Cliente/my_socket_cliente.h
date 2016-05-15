@@ -11,6 +11,8 @@
 #include <QNetworkInterface>
 #include <QCryptographicHash>
 #include <QAbstractSocket>
+#include <QImageWriter>
+
 
 #include "protomessage.pb.h"
 
@@ -19,7 +21,7 @@ class My_Socket_Cliente : public QObject
     Q_OBJECT
 
 public:
-    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd, QObject *parent = 0);
+    explicit My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd, const QImage &img_vatar, QObject *parent = 0);
     bool logeado;
     QSslSocket* sslSocket;//socket que vamos a utilizar
     QString username;
@@ -28,6 +30,7 @@ public:
     quint16 server_port;
     QHostAddress my_ip;
     quint16 my_port;
+    const QImage &avatar;
 
 signals:
 
