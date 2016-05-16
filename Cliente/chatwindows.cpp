@@ -6,6 +6,9 @@
 #include <QImageWriter>
 #include <QPixmap>
 #include <QBuffer>
+#include <QTextEdit>
+#include <QColor>
+#include <QScrollBar>
 
 ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent) :
     QDialog(parent),
@@ -21,9 +24,10 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 
     if(!isConnected){
-       ui->plainTextEditrecive->setDisabled(true);
+       ui->textEditReceive->setDisabled(true);
        ui->lineEditTexTenv->setDisabled(true);
     }
+
 
     connect(mySocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
@@ -176,8 +180,17 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->waitForBytesWritten();
 
 
+<<<<<<< HEAD
         //ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
+=======
+        QString pressed;
+        pressed = "<b>" + ui->lineEditTexTenv->text() + "</b>";
+
+        ui->textEditReceive->append(pressed);
+        ui->textEditReceive->setAlignment(Qt::AlignRight);
+>>>>>>> 57065c6aec18aa3f3810a893e3d14c6b64803a20
         ui->lineEditTexTenv->setText("");
+
 
 
         //ENVIO AL SERVIDOR
@@ -275,9 +288,17 @@ void ChatWindows::readyRead()
 
             mySocket->logeado = true;
         }else if(sms.type() == 2){
-            ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+            QString mostrar;
+            mostrar = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
+            //TODO: Color y Size letras mensaje
+            ui->textEditReceive->append(mostrar + QString::fromStdString(sms.message()));
+            ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 57065c6aec18aa3f3810a893e3d14c6b64803a20
 
 }
