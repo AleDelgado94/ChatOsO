@@ -111,13 +111,12 @@ void Client::readyRead()
 
 
 
-                qDebug() << "usuario: " << QString::fromStdString(m.username());
+                //qDebug() << "usuario: " << QString::fromStdString(m.username());
                 //EL USUARIO SE UNIRÁ A LA SALA
-                qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
-                qDebug() << query.lastError();
-                //Enviar X mensajes de la sala al usuario
+                query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
 
-                query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id LIMIT 10;");
+                query.exec("CREATE VIEW History AS SELECT usuario, mensaje, id FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
+                query.exec("SELECT usuario, mensaje FROM History ORDER BY id ASC;");
 
                 while(query.next()){
                     Message reenvio;
@@ -154,6 +153,7 @@ void Client::readyRead()
                         //sslSocket_->waitForBytesWritten();
                     }
                 }
+                query.exec("DROP VIEW History");
             }
 
         }
@@ -180,21 +180,17 @@ void Client::readyRead()
 
 
                 qDebug() << "Creando tablas e insertando";
-                qDebug() << query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
-                qDebug() << query.exec();
-                qDebug() << query.executedQuery();
+                query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
+                query.exec();
+                query.executedQuery();
 
 
                 QString message_sala = "MESSAGE_" + QString::fromStdString(m.salaname());
-                qDebug() << message_sala;
 
                 //query.prepare("CREATE TABLE MESSAGE_:salaname (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT)");
                 //query.bindValue(":salaname", QString::fromStdString(m.salaname()));
-                qDebug() << query.exec("CREATE TABLE "+ message_sala + " (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT);");
+                query.exec("CREATE TABLE "+ message_sala + " (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT);");
                 //qDebug() << query.exec();
-                qDebug() << query.executedQuery();
-                qDebug() << "Error al crear la tabla mensajes: " << query.lastError();
-
 
                 qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
                 //query.exec();
@@ -209,12 +205,13 @@ void Client::readyRead()
 
                 qDebug() << "usuario: " << QString::fromStdString(m.username());
                 //EL USUARIO SE UNIRÁ A LA SALA
-                qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
+                query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
                 //Enviar X mensajes de la sala al usuario
 
-                qDebug() << query.exec("SELECT usuario, mensaje FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id LIMIT 10;");
-                qDebug() << query.lastError();
-                qDebug() << query.executedQuery();
+                query.exec("CREATE VIEW History AS SELECT usuario, mensaje, id FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
+                query.lastError();
+                query.exec("SELECT usuario, mensaje FROM History ORDER BY id ASC;");
+
 
                 while(query.next()){
                     Message reenvio;
@@ -251,6 +248,7 @@ void Client::readyRead()
 
                     }
                 }
+                query.exec("DROP VIEW History");
             }
 
         }
