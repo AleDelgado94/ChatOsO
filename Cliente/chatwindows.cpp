@@ -6,6 +6,9 @@
 #include <QImageWriter>
 #include <QPixmap>
 #include <QBuffer>
+#include <QTextEdit>
+#include <QColor>
+#include <QScrollBar>
 
 ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent) :
     QDialog(parent),
@@ -21,9 +24,10 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 
     if(!isConnected){
-       ui->plainTextEditrecive->setDisabled(true);
+       ui->textEditReceive->setDisabled(true);
        ui->lineEditTexTenv->setDisabled(true);
     }
+
 
     connect(mySocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
@@ -176,8 +180,13 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->waitForBytesWritten();
 
 
-        ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
+        QString pressed;
+        pressed = "<b>" + ui->lineEditTexTenv->text() + "</b>";
+
+        ui->textEditReceive->append(pressed);
+        ui->textEditReceive->setAlignment(Qt::AlignRight);
         ui->lineEditTexTenv->setText("");
+
 
 
         //ENVIO AL SERVIDOR
@@ -275,23 +284,14 @@ void ChatWindows::readyRead()
 
             mySocket->logeado = true;
         }else if(sms.type() == 2){
-            ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+            QString mostrar;
+            mostrar = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
+            //TODO: Color y Size letras mensaje
+            ui->textEditReceive->append(mostrar + QString::fromStdString(sms.message()));
+            ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
     }
 
-        mySocket->sslSocket->readAll(); //Si leemos del servidor
-        Message message;
-        std::string mensaje;
-        std::string cout_mensaje;
-        //tipo_var cout_avatar;
 
-        //DESCERIALIZACION -->guardamos en mensaje lo que tenga message que lo enviar el server
-        message.ParseFromString(mensaje);
-        cout_mensaje = message.message();
-        //TODO:almacenar avatar y mostrar.
-        //cout_avatar = meesage.avatar()...
-
-        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(cout_mensaje));
-        //ui->plainTextEditrecive->appendPlainText(cout_avatar);
 
 }

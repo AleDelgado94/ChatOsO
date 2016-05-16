@@ -354,11 +354,48 @@ void Client::readyRead()
 
                     QString ruta("../Servidor/Images/");
                     ruta +=  QString::fromStdString(m.username());
+                    ruta += ".jpg";
                     QImageWriter img(ruta, "jpg");
 
                     img.write(image);
 
+                    //MANDAR LA NUEVA IMAGEN A LOS USUARIOS CONECTADOS ANTERIORMENTE
+/*
+                    QByteArray ba2;
+                    QBuffer buffer2(&ba2);
+                    image.save(&buffer2, "JPG");
 
+
+                    Message confirmacion;
+                    confirmacion.set_username(m.username());
+                    confirmacion.set_ip("");
+                    confirmacion.set_type(5);
+                    confirmacion.set_port(0);
+                    confirmacion.set_avatar(ba2.toBase64().data());
+
+
+                    std::string message_confirm;
+                    message_confirm = confirmacion.SerializeAsString();
+
+                    QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                    //ENVIO del tamaño y paquete
+                    quint32 size_packet = pkt.size();
+                    QByteArray envio;
+                    QDataStream env(&envio, QIODevice::WriteOnly);
+                    env.setVersion(7);
+                    env << (quint32)size_packet;
+
+
+                    while(list_clients.begin() != list_clients.end()){
+                        QSslSocket *socket = list_clients.begin().value();
+
+                        socket->write(envio);
+                        socket->write(pkt);
+
+                        list_clients.begin()++;
+                    }*/
+
+                    //**************************************************************
 
                     QDirIterator dirIt("../Servidor/Images", QDirIterator::Subdirectories);
                     qDebug() << dirIt.path();
@@ -401,9 +438,11 @@ void Client::readyRead()
 
 
                                 if(!message_confirm.empty()){
+
                                     sslSocket_->write(envio);
                                     sslSocket_->write(pkt);
                                     list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+
                                 }
                                 qDebug() << list_clients;
                             }
