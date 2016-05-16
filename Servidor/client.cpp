@@ -1,6 +1,7 @@
 #include "client.h"
 #include <iostream>
 #include <QDirIterator>
+#include <QImageWriter>
 
 Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     QObject(parent),
@@ -337,6 +338,27 @@ void Client::readyRead()
             query.exec(consulta);
             while(query.next()){
                 if(!query.value("usuario").toString().isEmpty()){
+
+
+
+                    qDebug() << "Recibiendo imagenes";
+                    QBuffer* buffer = new QBuffer;
+                    buffer->open(QIODevice::ReadWrite);
+                    QByteArray b;
+                    quint64 bytes = buffer->write(QByteArray::fromBase64(m.avatar().data()));
+
+                    buffer->seek(buffer->pos() - bytes);
+                    QImage image;
+                    qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+
+
+                    QString ruta("../Servidor/Images/");
+                    ruta +=  QString::fromStdString(m.username());
+                    QImageWriter img(ruta, "jpg");
+
+                    img.write(image);
+
+
 
                     QDirIterator dirIt("../Servidor/Images", QDirIterator::Subdirectories);
                     qDebug() << dirIt.path();
