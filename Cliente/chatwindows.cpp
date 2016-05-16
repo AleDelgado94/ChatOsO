@@ -44,14 +44,24 @@ Message ChatWindows::deserializar()
               {
                   //Guardamos el tamaño del paquete
                   in >> tamPacket;
+                  qDebug() << tamPacket;
                   //Teniendo el tamaño de paquete lo leemos del buffer
               } if ((tamPacket !=0) && (mySocket->sslSocket->bytesAvailable() >=tamPacket )){
                  buffer=mySocket->sslSocket->read(tamPacket);
-                 paquete.ParseFromString(buffer.toStdString());
-                 tamPacket =0;
 
-             }else
-                mySocket->sslSocket->readAll();
+                 qDebug() << buffer;
+
+                 paquete.ParseFromString(buffer.toStdString());
+
+                 tamPacket =0;
+                 return paquete;
+
+             }else{
+                  qDebug() << "Llegan menos bytes";
+                  paquete.set_type(10);
+                  return paquete;
+              }
+                  //mySocket->sslSocket->readAll();
 
     }
     return paquete;
@@ -160,6 +170,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
 
         mySocket->sslSocket->write(envio);
         mySocket->sslSocket->write(pkt);
+        mySocket->sslSocket->waitForBytesWritten();
 
 
         ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
@@ -211,6 +222,7 @@ void ChatWindows::on_pushButtonConectar_clicked()
         //ENVIO AL SERVIDOR
         mySocket->sslSocket->write(envio);
         mySocket->sslSocket->write(pkt);
+        mySocket->sslSocket->waitForBytesWritten();
 
          //mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
          ui->lineEditTexTenv->setEnabled(true);
@@ -223,34 +235,45 @@ void ChatWindows::readyRead()
 {
     qDebug() << "Entrando mensaje";
 
-    Message sms;
-    sms = deserializar();
-
-    if(sms.type() == 5){
-
-        QBuffer* buffer = new QBuffer;
-        buffer->open(QIODevice::ReadWrite);
-        QByteArray b;
-        quint64 bytes = buffer->write(QByteArray::fromBase64(sms.avatar().data()));
-        qDebug() << sms.avatar().data();
-
-        buffer->seek(buffer->pos() - bytes);
-        QImage image;
-        qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+    while(mySocket->sslSocket->bytesAvailable()){
 
 
-        QString ruta("../Cliente/Images/");
-        ruta +=  QString::fromStdString(sms.username());
-        qDebug() << ruta;
-        QImageWriter img(ruta, "jpg");
+        Message sms;
+        sms = deserializar();
 
-        img.write(image);
-        //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
-        //qDebug() << "El tamaño del avatar es de: " << avatar.size();
 
-        mySocket->logeado = true;
-    }else if(sms.type() == 2){
-        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+        if(sms.type() == 10){
+            qDebug() << "Entra aqui";
+            return;
+        }
+
+
+        if(sms.type() == 5){
+
+            qDebug() << "Recibiendo imagenes";
+            QBuffer* buffer = new QBuffer;
+            buffer->open(QIODevice::ReadWrite);
+            QByteArray b;
+            quint64 bytes = buffer->write(QByteArray::fromBase64(sms.avatar().data()));
+
+            buffer->seek(buffer->pos() - bytes);
+            QImage image;
+            qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+
+
+            QString ruta("../Cliente/Images/");
+            ruta +=  QString::fromStdString(sms.username());
+            qDebug() << ruta;
+            QImageWriter img(ruta, "jpg");
+
+            img.write(image);
+            //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
+            //qDebug() << "El tamaño del avatar es de: " << avatar.size();
+
+            mySocket->logeado = true;
+        }else if(sms.type() == 2){
+            ui->plainTextEditrecive->appendPlainText(QString::fromStdString(sms.message()));
+        }
     }
 
 

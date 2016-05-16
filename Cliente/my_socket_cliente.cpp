@@ -74,10 +74,12 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     QByteArray pkt(mensaje.c_str(), mensaje.size());
     //ENVIO del tamaño y paquete
     quint32 size_packet = pkt.size();
+    qDebug() << size_packet;
     QByteArray envio;
     QDataStream env(&envio, QIODevice::WriteOnly);
     env.setVersion(7);
     env << (quint32)size_packet;
+    qDebug() << envio.data();
 
     sslSocket->write(envio);
     sslSocket->write(pkt);
