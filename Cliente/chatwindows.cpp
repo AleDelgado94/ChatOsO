@@ -176,7 +176,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->waitForBytesWritten();
 
 
-        ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
+        //ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
         ui->lineEditTexTenv->setText("");
 
 
@@ -279,19 +279,5 @@ void ChatWindows::readyRead()
         }
     }
 
-        mySocket->sslSocket->readAll(); //Si leemos del servidor
-        Message message;
-        std::string mensaje;
-        std::string cout_mensaje;
-        //tipo_var cout_avatar;
-
-        //DESCERIALIZACION -->guardamos en mensaje lo que tenga message que lo enviar el server
-        message.ParseFromString(mensaje);
-        cout_mensaje = message.message();
-        //TODO:almacenar avatar y mostrar.
-        //cout_avatar = meesage.avatar()...
-
-        ui->plainTextEditrecive->appendPlainText(QString::fromStdString(cout_mensaje));
-        //ui->plainTextEditrecive->appendPlainText(cout_avatar);
 
 }

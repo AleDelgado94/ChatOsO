@@ -354,6 +354,7 @@ void Client::readyRead()
 
                     QString ruta("../Servidor/Images/");
                     ruta +=  QString::fromStdString(m.username());
+                    ruta += ".jpg";
                     QImageWriter img(ruta, "jpg");
 
                     img.write(image);
