@@ -129,23 +129,16 @@ int main(int argc, char *argv[])
             syslog(LOG_ERR, "No fue posible crear una nueva sesión\n");
             exit(11);
         }
-        if((chdir("/")) < 0){
-            syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
-            exit(12);
-        }
+        //if((chdir("/")) < 0){
+        //    syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
+        //    exit(12);
+        //}
 
         passwd* user = getpwnam("midemonio");
         seteuid(user->pw_uid);
 
         group* group_ = getgrnam("midemonio");
-        setegid(group_->gr_gid);
-
-        if(group_ != NULL){
-            if(setegid(group_->gr_gid) != 0){
-                syslog(LOG_ERR, "Error en setegid");
-                exit(13);
-            }
-        }*/
+        setegid(group_->gr_gid);*/
 
 
         quint16 port;

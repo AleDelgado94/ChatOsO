@@ -25,7 +25,7 @@ void LoginUser::on_pushButtonEntrar_clicked()
     QString password = ui->lineEditPassword->text();
     mySocket = new My_Socket_Cliente(ipserver_, portserver_, username, password, ruta_img_user);
     ChatWindows chat(crearsala, namesala, mySocket);
-    mySocket->sslSocket->waitForReadyRead(3000);
+    mySocket->sslSocket->waitForReadyRead();
     if(mySocket->logeado == true ){
         qDebug() << "entra al login";
         this->hide();

@@ -2,6 +2,7 @@ QT += core
 QT += gui
 QT += network
 QT += sql
+QT += multimedia multimediawidgets
 
 PKGCONFIG += openssl
 
@@ -22,7 +23,8 @@ SOURCES += \
 
 DISTFILES += \
     protobuf.pri \
-    protomessage.proto
+    protomessage.proto \
+    Images/haribo.jpg
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
