@@ -57,7 +57,7 @@ void PerfilUsers::on_pushButtonSeleccion_clicked()
         ui->lineEditAvatar->setText(filename);
     }
     else{
-        ui->lineEditAvatar->setText("./Imagenes/haaribo.jpeg");
+        ui->lineEditAvatar->setText("./Imagenes/haribo.jpeg");
     }
 }
 

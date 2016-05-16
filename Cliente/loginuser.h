@@ -20,7 +20,7 @@ class LoginUser : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginUser(QString ip_server, quint16 port_server, QString sala, bool crear_sala, const QImage &img, QWidget *parent = 0);
+    explicit LoginUser(QString ip_server, quint16 port_server, QString sala, bool crear_sala, QString ruta_img, QWidget *parent = 0);
     ~LoginUser();
 
 private slots:
@@ -33,7 +33,7 @@ private:
     quint16 portserver_;
     QString namesala;
     bool crearsala;
-    const QImage &imagen_;
+    QString ruta_img_user;
 };
 
 #endif // LOGINUSER_H

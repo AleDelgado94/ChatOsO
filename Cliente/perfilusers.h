@@ -40,7 +40,7 @@ private slots:
 
     void on_pushButtonCamaraWeb_clicked();
 
-    void image_s(const QImage &imagen);
+    //void image_s(const QImage &imagen);
 
 
 

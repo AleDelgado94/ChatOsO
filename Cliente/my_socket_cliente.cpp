@@ -2,7 +2,7 @@
 #include <QSslError>
 #include <QDataStream>
 
-My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd , const QImage &img_vatar, QObject *parent) :
+My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QString user_name, QString passwd , QString ruta_imagen, QObject *parent) :
 
     QObject(parent),
     username(user_name),
@@ -11,10 +11,11 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     server_port(port_server),
     my_ip("127.0.0.2"),
     my_port(3003),
-    avatar(img_vatar),
     logeado(false)
 {
     sslSocket = new QSslSocket();//creamos el socket que vamos a usar
+    avatar = new QImage();
+    avatar->load(ruta_imagen, "jpg");
     //sslSocket->ignoreSslErrors();
     sslSocket->setProtocol(QSsl::TlsV1_1);
     sslSocket->connectToHostEncrypted(ip_server, port_server);
@@ -37,9 +38,8 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     std::string mensaje;
     Message message;
     QByteArray pass = password.toUtf8();
-    QBuffer buffer;
-    QImageWriter img_write;
-
+    QByteArray ba;
+    QBuffer buffer(&ba);
     //LISTA CON DIR DEL HOST
     //QList<QHostAddress> list = QNetworkInterface::allAddresses();
 
@@ -66,15 +66,9 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     //message.set_ip_user(my_ip.toString().toStdString());//list.at(2) 2-->porque es la dir de la subred en la lista
     message.set_port(0);
 
-    //DATESTAMP(IMG)
-    img_write.setDevice(&buffer);
-    img_write.setFormat("jpeg");
-    img_write.setCompression(40);
-    img_write.write(avatar);
-
     //IMAGEN
-    QByteArray binari_imagen = buffer.buffer();
-    message.set_avatar(binari_imagen.data(), binari_imagen.size());
+    avatar->save(&buffer, "jpg");
+    message.set_avatar(ba.toBase64().data());
 
     //SERIALIZAMOS
     mensaje = message.SerializeAsString();

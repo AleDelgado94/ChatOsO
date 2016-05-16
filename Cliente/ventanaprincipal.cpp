@@ -74,7 +74,8 @@ void VentanaPrincipal::on_pushButtonConectar_clicked()
 
 
     this->hide();
-    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala, conectarsala, settings.value("Ruta_My_Avatar").toString());
+    QString ruta_imagen(settings.value("Ruta_My_Avatar").toString());
+    LoginUser log(settings.value("Dir-Server").toString(), settings.value("Puerto").toInt(), nombre_sala, conectarsala, ruta_imagen);
     log.exec();
 
 }

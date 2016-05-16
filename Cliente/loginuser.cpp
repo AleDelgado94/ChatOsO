@@ -1,14 +1,14 @@
 #include "loginuser.h"
 #include "ui_loginuser.h"
 
-LoginUser::LoginUser(QString ip_server, quint16 port_server ,QString sala, bool crear_sala, const QImage &img, QWidget *parent) :
+LoginUser::LoginUser(QString ip_server, quint16 port_server ,QString sala, bool crear_sala, QString ruta_img, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LoginUser),
     ipserver_(ip_server),
     portserver_(port_server),
     namesala(sala),
     crearsala(crear_sala),
-    imagen_(img)
+    ruta_img_user(ruta_img)
 {
     ui->setupUi(this);
 
@@ -23,7 +23,7 @@ void LoginUser::on_pushButtonEntrar_clicked()
 {
     QString username = ui->lineEditUsername->text();
     QString password = ui->lineEditPassword->text();
-    mySocket = new My_Socket_Cliente(ipserver_, portserver_, username, imagen_, password);
+    mySocket = new My_Socket_Cliente(ipserver_, portserver_, username, password, ruta_img_user);
     ChatWindows chat(crearsala, namesala, mySocket);
     mySocket->sslSocket->waitForReadyRead(3000);
     if(mySocket->logeado == true ){
