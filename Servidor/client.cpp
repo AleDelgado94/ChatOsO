@@ -360,7 +360,7 @@ void Client::readyRead()
                     img.write(image);
 
                     //MANDAR LA NUEVA IMAGEN A LOS USUARIOS CONECTADOS ANTERIORMENTE
-/*
+
                     QByteArray ba2;
                     QBuffer buffer2(&ba2);
                     image.save(&buffer2, "JPG");
@@ -385,15 +385,16 @@ void Client::readyRead()
                     env.setVersion(7);
                     env << (quint32)size_packet;
 
+                    QMap<QString, QSslSocket*>::iterator i;
+                    for(i = list_clients.begin(); i != list_clients.end(); ++i){
+                        qDebug() << "Recorriendo lista";
 
-                    while(list_clients.begin() != list_clients.end()){
-                        QSslSocket *socket = list_clients.begin().value();
+                        QSslSocket *socket = i.value();
 
                         socket->write(envio);
                         socket->write(pkt);
 
-                        list_clients.begin()++;
-                    }*/
+                    }
 
                     //**************************************************************
 
@@ -447,12 +448,11 @@ void Client::readyRead()
                                 qDebug() << list_clients;
                             }
                     }
-
-
                 }else{
                     sslSocket_->disconnectFromHost();
                     sslSocket_->close();
                 }
+
             }
 
 
