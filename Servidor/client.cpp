@@ -321,7 +321,9 @@ void Client::readyRead()
 
             qDebug() << query.exec("DELETE FROM " + QString::fromStdString(m.salaname()) + " where usuario='" + QString::fromStdString(m.username()) + "';");
             sslSocket_->disconnect();
+            qDebug() << list_clients;
             list_clients.remove(QString::fromStdString(m.username()));
+            qDebug() << list_clients;
 
         }
             break;

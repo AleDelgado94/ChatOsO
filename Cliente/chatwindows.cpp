@@ -22,6 +22,7 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
     ui->setupUi(this);
 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(this, SIGNAL(rejected()), this, SLOT(cerrando()));
 
     if(!isConnected){
        ui->textEditReceive->setDisabled(true);
@@ -35,6 +36,7 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
 ChatWindows::~ChatWindows()
 {
     delete ui;
+
 }
 
 Message ChatWindows::deserializar()
@@ -294,4 +296,37 @@ void ChatWindows::readyRead()
 
 
 
+}
+
+void ChatWindows::cerrando()
+{
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
+
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip("");
+    message.set_port(0);
+    message.set_type(4);
+    message.set_salaname(namesala.toStdString());
+
+    //SERIALIZAMOS LA INFO
+    mensaje_envio = message.SerializeAsString();
+
+    QByteArray pkt(mensaje_envio.c_str(), mensaje_envio.size());
+    //ENVIO del tamaño y paquete
+    quint32 size_packet = pkt.size();
+    QByteArray envio;
+    QDataStream env(&envio, QIODevice::WriteOnly);
+    env.setVersion(7);
+    env << (quint32)size_packet;
+
+    mySocket->sslSocket->write(envio);
+    mySocket->sslSocket->write(pkt);
+    mySocket->sslSocket->waitForBytesWritten();
+
+    mySocket->sslSocket->disconnect();
+
+     qApp->exit();
 }
