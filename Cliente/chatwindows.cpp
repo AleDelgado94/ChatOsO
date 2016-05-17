@@ -179,16 +179,11 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->write(pkt);
         mySocket->sslSocket->waitForBytesWritten();
 
-
-<<<<<<< HEAD
-        //ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
-=======
         QString pressed;
         pressed = "<b>" + ui->lineEditTexTenv->text() + "</b>";
 
         ui->textEditReceive->append(pressed);
         ui->textEditReceive->setAlignment(Qt::AlignRight);
->>>>>>> 57065c6aec18aa3f3810a893e3d14c6b64803a20
         ui->lineEditTexTenv->setText("");
 
 
@@ -295,10 +290,4 @@ void ChatWindows::readyRead()
             ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 57065c6aec18aa3f3810a893e3d14c6b64803a20
-
 }

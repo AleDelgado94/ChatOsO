@@ -68,7 +68,7 @@ void PerfilUsers::on_pushButtonCamaraWeb_clicked()
     foreach (const QCameraInfo &camerasInfo , cameras) {
         if(camerasInfo.deviceName() == "/dev/video0"){
             QCamera* camera = new QCamera(camerasInfo); //Creamos un objeto QCamera para capturar desde la camara web del pc
-            QCameraViewfinder* viewfinder = new QCameraViewfinder(); //muestra al usuario lo que la camara esta capturando
+            QCameraViewfinder* viewfinder = new QCameraViewfinder();
             viewfinder->show();
             viewfinder->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
             camera->setViewfinder(viewfinder);
