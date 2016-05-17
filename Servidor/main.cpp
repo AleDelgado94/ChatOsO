@@ -122,23 +122,23 @@ int main(int argc, char *argv[])
         //Enviar paquete al demonio syslog
         syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
 
-        /*pid_t sid;
+        pid_t sid;
 
         sid = setsid();
         if(sid < 0){
             syslog(LOG_ERR, "No fue posible crear una nueva sesión\n");
             exit(11);
         }
-        //if((chdir("/")) < 0){
-        //    syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
-        //    exit(12);
-        //}
+        if((chdir("/")) < 0){
+            syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
+            exit(12);
+        }
 
         passwd* user = getpwnam("midemonio");
         seteuid(user->pw_uid);
 
         group* group_ = getgrnam("midemonio");
-        setegid(group_->gr_gid);*/
+        setegid(group_->gr_gid);
 
 
         quint16 port;

@@ -354,7 +354,7 @@ void Client::readyRead()
                     qDebug() << image.loadFromData(buffer->buffer(), "JPG");
 
 
-                    QString ruta("../Servidor/Images/");
+                    QString ruta("/var/lib/ServidorChatOsO/Images/");
                     ruta +=  QString::fromStdString(m.username());
                     ruta += ".jpg";
                     QImageWriter img(ruta, "jpg");
@@ -400,7 +400,7 @@ void Client::readyRead()
 
                     //**************************************************************
 
-                    QDirIterator dirIt("../Servidor/Images", QDirIterator::Subdirectories);
+                    QDirIterator dirIt("/var/lib/ServidorChatOsO/Images/", QDirIterator::Subdirectories);
                     qDebug() << dirIt.path();
                     while(dirIt.hasNext()){
                         dirIt.next();
@@ -408,7 +408,7 @@ void Client::readyRead()
 
                             if(QFileInfo(dirIt.filePath()).suffix() == "jpg" || QFileInfo(dirIt.filePath()).suffix() == "jpeg" )
                             {
-                                QString ruta = "../Servidor/Images/" + dirIt.fileName();
+                                QString ruta = "/var/lib/ServidorChatOsO/Images/" + dirIt.fileName();
                                 avatar = new QImage();
                                 avatar->load(ruta, "JPG");
                                 qDebug() << ruta;
