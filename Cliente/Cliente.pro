@@ -15,7 +15,7 @@ PKGCONFIG += openssl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Cliente
+TARGET = ChatOsO
 TEMPLATE = app
 
 
@@ -46,4 +46,57 @@ FORMS    += \
 
 PROTOS = protomessage.proto
 include(protobuf.pri)
+
+
+unix {          # Esta configuración específica de Linux y UNIX
+    # Variables
+    #
+    isEmpty(PREFIX) {
+        PREFIX = /usr/local
+    }
+    MOC_DIR= ./moc
+    OBJECTS_DIR=./object
+
+    BINDIR  = $$PREFIX/bin
+    DATADIR = $$PREFIX/share
+    CONFDIR = /etc
+
+
+
+isEmpty(VARDIR) {
+        VARDIR  = /var/lib/$${TARGET}
+    }
+
+    DEFINES += APP_DATADIR=\\\"$$DATADIR\\\"
+    DEFINES += APP_VARDIR=\\\"$$VARDIR\\\"
+    DEFINES += APP_CONFFILE=\\\"$$CONFDIR/$${TARGET}.ini\\\"
+    DEFINES += APP_CLAVCERT=\\\$$CONFDIR/$${TARGET}\\\"
+
+    # Install
+    #
+    INSTALLS += target config icon32 desktop vardir
+
+    ## Instalar ejecutable
+    target.path = $$BINDIR
+
+    ## Instalar archivo de configuración
+    config.path = $$CONFDIR
+    config.files += $${TARGET}.ini
+
+    ## Instalar acceso directo en el menú del escritorio
+    desktop.path = $$DATADIR/applications
+    desktop.files += $${TARGET}.desktop
+
+    ## Instalar icono de aplicación
+    icon32.path = $$DATADIR/icons/hicolor/32x32/apps
+    icon32.files += ./data/32x32/$${TARGET}.png
+
+
+    ## Crear directorio de archivos variables
+    vardir.path = $$VARDIR
+    vardir.extra = mkdir -p $$DATADIR/icon && cp ../Cliente/Icon/* $$DATADIR/icons/hicolor/32x32/apps
+    vardir.commands = true
+
+}
+
 

@@ -13,8 +13,14 @@
 #include <QPaintDevice>
 #include <QDataStream>
 #include <QImageReader>
+#include <QTime>
+#include <QFile>
+#include <QTextStream>
+#include <QVector>
 
 #include "protomessage.pb.h"
+
+#define NumPruebas 10
 
 
 static QMap<QString, QSslSocket*> list_clients;
@@ -31,6 +37,7 @@ signals:
 public slots:
     void readyRead();
     void error();
+    void statistics();
     //void firstConnection();
 
 private:
@@ -44,6 +51,10 @@ private:
     Message message;
     QImage* avatar;
     QImageReader reader;
+    QVector<int> tConsultasDB;
+    QVector<int> tRecepcionPaquetes;
+    QVector<int> tEnvioPaquetes;
+    QVector<int> tEnvioImagenes;
 };
 
 #endif // CLIENT_H

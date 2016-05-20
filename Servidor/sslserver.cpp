@@ -3,6 +3,7 @@
 #include <QSslSocket>
 #include <QSslCertificate>
 #include <QSslKey>
+#include <syslog.h>
 
 SslServer::SslServer(QString dir, quint16 port, QSqlDatabase *db, QObject *parent):
     QTcpServer(parent),
@@ -17,6 +18,7 @@ SslServer::SslServer(QString dir, quint16 port, QSqlDatabase *db, QObject *paren
 void SslServer::incomingConnection(qintptr socketDescriptor){
 
     qDebug() << "Nueva Conexión";
+
     QSslSocket* socket = new QSslSocket();
 
     if(socket->setSocketDescriptor(socketDescriptor)){

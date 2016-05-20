@@ -78,6 +78,10 @@ int main(int argc, char *argv[])
     }
 
     if(!demonio){
+
+        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+        syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
+
         quint16 port;
         port = QString::fromStdString(port_option).toUInt();
 
@@ -91,6 +95,7 @@ int main(int argc, char *argv[])
         //SERVIDOR EJECUTANDO EN MODO DEMONIO
 
         pid_t pid;
+        pid_t sid;
 
         pid = fork();
         //fork() falló
@@ -107,22 +112,9 @@ int main(int argc, char *argv[])
         //A partir de este punto, estamos en el proceso hijo
 
         umask(0);
-        close(STDIN_FILENO);    //fd 0
-        close(STDOUT_FILENO);   //fd 1
-        close(STDERR_FILENO);   //fd 2
-
-        int fd0 = open("/dev/null", O_RDONLY);  //fd0 == 0
-        int fd1 = open("/dev/null", O_WRONLY);  //fd1 == 1
-        int fd2 = open("/dev/null", O_WRONLY);  //fd2 == 2
-
 
         //Abrir conexión demonio syslog
         openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
-
-        //Enviar paquete al demonio syslog
-        syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
-
-        pid_t sid;
 
         sid = setsid();
         if(sid < 0){
@@ -134,11 +126,30 @@ int main(int argc, char *argv[])
             exit(12);
         }
 
-        passwd* user = getpwnam("midemonio");
+        //Cerrar descriptores estandar
+        close(STDIN_FILENO);    //fd 0
+        close(STDOUT_FILENO);   //fd 1
+        close(STDERR_FILENO);   //fd 2
+
+        int fd0 = open("/dev/null", O_RDONLY);  //fd0 == 0
+        int fd1 = open("/dev/null", O_WRONLY);  //fd1 == 1
+        int fd2 = open("/dev/null", O_WRONLY);  //fd2 == 2
+
+    /*
+        passwd* user = getpwnam("ServidorChatOsO");
         seteuid(user->pw_uid);
 
-        group* group_ = getgrnam("midemonio");
-        setegid(group_->gr_gid);
+        group* group_ = getgrnam("ServidorChatOsO");
+        setegid(group_->gr_gid);*/
+
+        //Enviar paquete al demonio syslog
+        syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
+
+        // Archivo que contiene identificador de proceso del demonio
+        QFile file("/var/run/midemoniod.pid");
+        QTextStream out(&file);
+        out << pid;
+        file.close();
 
 
         quint16 port;

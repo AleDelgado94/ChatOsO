@@ -72,9 +72,10 @@ isEmpty(VARDIR) {
 
     ## Crear directorio de archivos variables
     vardir.path = $$VARDIR
-    vardir.extra = mkdir -p $$CONFDIR/$${TARGET} && mkdir -p $$CONFDIR/$${TARGET}/Certificados && mkdir -p $$VARDIR/clientes && mkdir -p $$VARDIR/Images && mkdir -p $$VARDIR/database && cp ../Servidor/database.db $$VARDIR/database && cp ../Certificados/* $$CONFDIR/$${TARGET}/Certificados
+    vardir.extra = mkdir -p $$CONFDIR/$${TARGET} && mkdir -p $$CONFDIR/$${TARGET}/Certificados && mkdir -p $$VARDIR/clientes && mkdir -p $$VARDIR/Images && mkdir -p $$VARDIR/database && cp ../Servidor/database.db $$VARDIR/database && cp ../Certificados/* $$CONFDIR/$${TARGET}/Certificados && mkdir -p $$VARDIR/estadisticas
     vardir.commands = true
-    ## Meter script en una carpeta
+
+    ## Script
     script.path = $$SCRIPT
-    script.files += $${TARGET}.sh
+    script.files += $${TARGET}
 }

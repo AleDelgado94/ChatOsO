@@ -2,6 +2,12 @@
 #include <iostream>
 #include <QDirIterator>
 #include <QImageWriter>
+#include <syslog.h>
+#include <unistd.h>
+#include <QDateTime>
+
+
+
 
 Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     QObject(parent),
@@ -15,6 +21,7 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     connect(sslSocket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), sslSocket_, SLOT(ignoreSslErrors()));
     connect(sslSocket_, SIGNAL(disconnected()), sslSocket_, SLOT(deleteLater()));
+    connect(sslSocket_, SIGNAL(disconnected()), this, SLOT(statistics()));
 
 
     if(!db->open()){
@@ -23,6 +30,7 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     }
 
 }
+
 
 Message Client::deserializar()
 {
@@ -37,7 +45,7 @@ Message Client::deserializar()
               {
 
                   in >> tamPacket;
-                  qDebug() << tamPacket;
+                  qDebug() << "El tamaño del paquete es: " << tamPacket;
               } if ((tamPacket !=0) && (sslSocket_->bytesAvailable() >=tamPacket )){
                  buffer=sslSocket_->read(tamPacket);
                  paquete.ParseFromString(buffer.toStdString());
@@ -52,6 +60,7 @@ Message Client::deserializar()
              }
                 //sslSocket_->readAll();
     }
+    paquete.set_type(10);
     return paquete;
 }
 
@@ -59,8 +68,16 @@ void Client::readyRead()
 {
 
     while(sslSocket_->bytesAvailable()){
+
+        QTime receiptPaquete;
+        receiptPaquete.start();
+
         Message m;
         m = deserializar();
+
+        if(receiptPaquete.elapsed() > 1)
+            tRecepcionPaquetes.append(receiptPaquete.elapsed());
+
         if(m.type() == 10)
             return;
 
@@ -79,11 +96,15 @@ void Client::readyRead()
             }
 
 
-            qDebug() << "case 0";
-
-
             if(!exist){
 
+
+
+                QString log = "Creando la sala " + QString::fromStdString(m.salaname()) + "\n";
+                syslog(LOG_NOTICE, log.toStdString().c_str());
+
+                QTime tDB;
+                tDB.start();
 
                 qDebug() << query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
                 qDebug() << query.exec();
@@ -104,22 +125,31 @@ void Client::readyRead()
                 qDebug() << query.executedQuery();
                 qDebug() << "Error al insertar al usuario: " << query.lastError();
 
+                if(tDB.elapsed() > 1)
+                    tConsultasDB.append(tDB.elapsed());
 
             }
             else{
 
-                qDebug() << "USUARIO UNIENDOSE A LA SALA";
+                QString log = "Usuario " + QString::fromStdString(m.username())+ " uniendose a la sala " + QString::fromStdString(m.salaname()) + "\n";
+                syslog(LOG_NOTICE, log.toStdString().c_str());
 
+                QTime tDB;
+                tDB.start();
 
-
-                //qDebug() << "usuario: " << QString::fromStdString(m.username());
                 //EL USUARIO SE UNIRÁ A LA SALA
                 query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
 
                 query.exec("CREATE VIEW History AS SELECT usuario, mensaje, id FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
                 query.exec("SELECT usuario, mensaje FROM History ORDER BY id ASC;");
 
+                tConsultasDB.append(tDB.elapsed());
+
+                QTime tEnvioMensajes;
+                tEnvioMensajes.start();
+
                 while(query.next()){
+                    qDebug() << "&================";
                     Message reenvio;
                     reenvio.set_message(query.value("mensaje").toString().toStdString());
                     reenvio.set_type(2);
@@ -139,21 +169,22 @@ void Client::readyRead()
                     env.setVersion(7);
                     env << (quint32)size_packet;
 
-
-
-                    //SERIALIZAMOS EL MENSAJE
-                    //std::string message_reenvio = reenvio.SerializeAsString();
-                    //qDebug() << QString::fromStdString(message_reenvio);
-
                     //ENVIAMOS LOS MENSAJES AL USUARIO
                     if(!mensaje_envio.empty()){
-                        //sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
                         //ENVIO a los clientes
                         sslSocket_->write(envio);
                         sslSocket_->write(pkt);
-                        //sslSocket_->waitForBytesWritten();
                     }
+
+
+
                 }
+
+                if(tEnvioMensajes.elapsed() > 1){
+                    qDebug() << "Envio de mensajes time: " << tEnvioMensajes.elapsed();
+                    tEnvioPaquetes.append(tEnvioMensajes.elapsed());
+                }
+
                 query.exec("DROP VIEW History");
             }
 
@@ -174,11 +205,13 @@ void Client::readyRead()
             }
 
 
-            qDebug() << "case 0";
-
-
             if(!exist){
 
+                QString log = "Creando la sala " + QString::fromStdString(m.salaname()) + "\n";
+                syslog(LOG_NOTICE, log.toStdString().c_str());
+
+                QTime tDB;
+                tDB.start();
 
                 qDebug() << "Creando tablas e insertando";
                 query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
@@ -198,21 +231,29 @@ void Client::readyRead()
                 qDebug() << query.executedQuery();
                 qDebug() << "Error al insertar al usuario: " << query.lastError();
 
+                if(tDB.elapsed() > 1)
+                    tConsultasDB.append(tDB.elapsed());
 
             }
             else{
 
-                qDebug() << "USUARIO UNIENDOSE A LA SALA";
+                QString log = "Usuario " + QString::fromStdString(m.username())+ " uniendose a la sala " + QString::fromStdString(m.salaname()) + "\n";
+                syslog(LOG_NOTICE, log.toStdString().c_str());
 
-                qDebug() << "usuario: " << QString::fromStdString(m.username());
+                QTime tDB;
+                tDB.start();
+
                 //EL USUARIO SE UNIRÁ A LA SALA
                 query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
                 //Enviar X mensajes de la sala al usuario
 
                 query.exec("CREATE VIEW History AS SELECT usuario, mensaje, id FROM MESSAGE_" + QString::fromStdString(m.salaname()) + " ORDER BY id DESC LIMIT 10;");
-                query.lastError();
                 query.exec("SELECT usuario, mensaje FROM History ORDER BY id ASC;");
 
+                tConsultasDB.append(tDB.elapsed());
+
+                QTime tEnvioMensajes;
+                tEnvioMensajes.start();
 
                 while(query.next()){
                     Message reenvio;
@@ -234,20 +275,18 @@ void Client::readyRead()
                     env << (quint32)size_packet;
 
 
-
-                    //SERIALIZAMOS EL MENSAJE
-                    //std::string message_reenvio = reenvio.SerializeAsString();
-                    //qDebug() << QString::fromStdString(message_reenvio);
-
                     //ENVIAMOS LOS MENSAJES AL USUARIO
                     if(!mensaje_envio.empty()){
-                        //sslSocket_->write(message_reenvio.c_str(), message_reenvio.length());
                         //ENVIO a los clientes
                         sslSocket_->write(envio);
                         sslSocket_->write(pkt);
-                        //sslSocket_->waitForBytesWritten();
 
                     }
+                }
+                qDebug() << "Tiempo de los mensajes: " << tEnvioMensajes.elapsed();
+                if(tEnvioMensajes.elapsed() >= 0){
+                    qDebug() << "Tiempo al reenviar los mensajes" << tEnvioMensajes.elapsed();
+                    tEnvioPaquetes.append(tEnvioMensajes.elapsed());
                 }
                 query.exec("DROP VIEW History");
             }
@@ -258,9 +297,6 @@ void Client::readyRead()
         case 2:
         {
             //ENVIAR MENSAJE A UNA SALA
-            //Reenviamos el mensaje a todos los usuarios de la sala
-            //Metemos el mensaje en el historial
-
 
             int port = m.port();
             std::string puerto;
@@ -274,13 +310,17 @@ void Client::readyRead()
             //COMPROBAMOS QUE USUARIOS (DIR + PUERTO) PERTENECEN A ESA SALA
             std::string usuarios_sala = "SELECT usuario FROM " + m.salaname() + " WHERE usuario != '" + m.username() + "';";
             QString usuario;
-            quint16 p;
+
+            qint64 clock = QDateTime::currentMSecsSinceEpoch();
+            QTime tEnvioMensajes;
+            tEnvioMensajes.start();
 
             query.exec(QString::fromStdString(usuarios_sala));
 
             std::string mensaje;
             mensaje = m.SerializeAsString();
             qDebug() << "El mensaje a reenviar es: " << QString::fromStdString(mensaje);
+
 
             QByteArray pkt(mensaje.c_str(), mensaje.size());
             //ENVIO del tamaño y paquete
@@ -308,6 +348,10 @@ void Client::readyRead()
                 }
 
             }
+            clock = QDateTime::currentMSecsSinceEpoch()-clock;
+                tEnvioPaquetes.append(clock);
+
+            qDebug() << "Tiempo reenvio de mensajes entre usuarios: " << clock;
 
 
         }
@@ -317,10 +361,15 @@ void Client::readyRead()
         case 4:
         {
 
+            QString log = "Usuario " + QString::fromStdString(m.username())+ " saliendo de la sala " + QString::fromStdString(m.salaname()) + "\n";
+            syslog(LOG_NOTICE, log.toStdString().c_str());
             //DESCONEXIÓN. ELIMINACION DE LA SALA
 
             qDebug() << query.exec("DELETE FROM " + QString::fromStdString(m.salaname()) + " where usuario='" + QString::fromStdString(m.username()) + "';");
-            sslSocket_->disconnect();
+            //sslSocket_->disconnect();
+            sslSocket_->disconnectFromHost();
+            sslSocket_->close();
+            //sslSocket_->disconnectFromHost();
             qDebug() << list_clients;
             list_clients.remove(QString::fromStdString(m.username()));
             qDebug() << list_clients;
@@ -351,12 +400,13 @@ void Client::readyRead()
 
                     buffer->seek(buffer->pos() - bytes);
                     QImage image;
-                    qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+                    image.loadFromData(buffer->buffer(), "JPG");
 
 
                     QString ruta("/var/lib/ServidorChatOsO/Images/");
                     ruta +=  QString::fromStdString(m.username());
                     ruta += ".jpg";
+                    qDebug() << "La ruta de la imagen es: " << ruta;
                     QImageWriter img(ruta, "jpg");
 
                     img.write(image);
@@ -369,7 +419,7 @@ void Client::readyRead()
 
 
                     Message confirmacion;
-                    confirmacion.set_username(m.username());
+                    confirmacion.set_username(m.username()+".jpg");
                     confirmacion.set_ip("");
                     confirmacion.set_type(5);
                     confirmacion.set_port(0);
@@ -389,8 +439,6 @@ void Client::readyRead()
 
                     QMap<QString, QSslSocket*>::iterator i;
                     for(i = list_clients.begin(); i != list_clients.end(); ++i){
-                        qDebug() << "Recorriendo lista";
-
                         QSslSocket *socket = i.value();
 
                         socket->write(envio);
@@ -401,11 +449,11 @@ void Client::readyRead()
                     //**************************************************************
 
                     QDirIterator dirIt("/var/lib/ServidorChatOsO/Images/", QDirIterator::Subdirectories);
-                    qDebug() << dirIt.path();
+                    QTime tEnvImages;
+                    tEnvImages.start();
                     while(dirIt.hasNext()){
                         dirIt.next();
                         if(QFileInfo(dirIt.filePath()).isFile())
-
                             if(QFileInfo(dirIt.filePath()).suffix() == "jpg" || QFileInfo(dirIt.filePath()).suffix() == "jpeg" )
                             {
                                 QString ruta = "/var/lib/ServidorChatOsO/Images/" + dirIt.fileName();
@@ -447,9 +495,14 @@ void Client::readyRead()
                                     list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
 
                                 }
+
                                 qDebug() << list_clients;
                             }
                     }
+                    if(tEnvImages.elapsed() > 1)
+                        tEnvioImagenes.append(tEnvImages.elapsed());
+                    qDebug() << tEnvImages.elapsed();
+
                 }else{
                     sslSocket_->disconnectFromHost();
                     sslSocket_->close();
@@ -469,59 +522,53 @@ void Client::readyRead()
 void Client::error(){
     qDebug() << "Error\n";
 }
-/*
-void Client::firstConnection()
+
+void Client::statistics()
 {
+    QString ruta_estadistica("/var/lib/ServidorChatOsO/estadisticas/");
+    ruta_estadistica += QString::number(sslSocket_->socketDescriptor());
+    ruta_estadistica += ".txt";
+    QFile estadisticas(ruta_estadistica);
 
-    qDebug() << "Conexión entrante";
-    //TODO: Deserializar con el tamaño del paquete al inicio
+    qDebug() << tRecepcionPaquetes;
+    qDebug() << tConsultasDB;
+    qDebug() << tEnvioImagenes;
+    qDebug() << tEnvioPaquetes;
 
-    QByteArray buffer;
-    buffer = sslSocket_->readAll();
-    qDebug() << buffer;
+    if(estadisticas.open(QIODevice::WriteOnly | QIODevice::Append)){
+        QTextStream stat(&estadisticas);
 
-    Message_Log message;
-    message.ParseFromString(buffer.toStdString());
+        stat << "TIEMPOS ms\n";
+        stat << "PRUEBAS: " << NumPruebas << "\n";
 
+        int tRecibido = 0;
+        for(int i=0; i<tRecepcionPaquetes.size() && i<NumPruebas; i++){
+            tRecibido += tRecepcionPaquetes[i];
+        }
 
-    QSqlQuery query(*db);
+        stat << "Tiempo medio Recepción de mensaje: " << tRecibido/NumPruebas << "\n";
 
-    query.prepare("SELECT * FROM login WHERE usuario=':user' "
-                  "AND password=':pass'");
-    query.bindValue(":user", QString::fromStdString(message.name_user()));
-    query.bindValue(":pass", QString::fromStdString(message.password()));
+        int tConsultas = 0;
+        for(int i=0; i<tConsultasDB.size() && i<NumPruebas; i++){
+            tConsultas += tConsultasDB[i];
+        }
 
-    query.exec();
+        stat << "Tiempo medio Consultas en la Base de Datos: " << tConsultas/NumPruebas << "\n";
 
-    if(!query.value("usuario").toString().isEmpty()){
-        //SIGNIFICA QUE EL USUARIO ESTÁ EN LA BASE DE DATOS
-        //TODO: Enviar todas las fotos de los usuarios, mensaje OK
+        int tImagenes = 0;
+        for(int i=0; i<tEnvioImagenes.size() && i<NumPruebas; i++){
+            tImagenes += tEnvioImagenes[i];
+        }
 
-        QHostAddress ip(QString::fromStdString(message.ip_user()));
+        stat << "Tiempo Envio de Imagenes: " << tImagenes << "\n";
 
-        //QHostAddress ip = sslSocket_->peerAddress();
-        //quint16 port = sslSocket_->peerPort();
-        quint16 port = message.port_user();
+        int tEnvPaquetes = 0;
+        for(int i=0; i<tEnvioPaquetes.size() && i<NumPruebas; i++){
+            tEnvPaquetes += tEnvioPaquetes[i];
+        }
 
-        //METO EN LA BASE DE DATOS EL PUERTO Y LA DIRECCION
-        query.prepare("UPDATE login SET ip = ':dir_ip' WHERE usuario=':user'");
-        query.bindValue(":user", QString::fromStdString(message.name_user()));
-        query.bindValue(":dir_ip",ip.toString());
-        query.exec();
-
-        query.prepare("UPDATE login SET port=:puerto WHERE usuario=':user'");
-        query.bindValue(":user", QString::fromStdString(message.name_user()));
-        query.bindValue(":puerto",port);
-        query.exec();
-
-
-
-        sslSocket_->write("OK");
-        list_clients.insert(sslSocket_, QString::fromStdString(message.name_user()));
-    }else{
-        sslSocket_->disconnectFromHost();
-        sslSocket_->close();
+        stat << "Tiempo Envio de Mensajes Historial : " << tEnvPaquetes << "\n";
     }
+    estadisticas.close();
 
 }
-*/

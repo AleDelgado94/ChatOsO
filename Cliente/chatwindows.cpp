@@ -56,11 +56,7 @@ Message ChatWindows::deserializar()
                   //Teniendo el tamaño de paquete lo leemos del buffer
               } if ((tamPacket !=0) && (mySocket->sslSocket->bytesAvailable() >=tamPacket )){
                  buffer=mySocket->sslSocket->read(tamPacket);
-
-                 qDebug() << buffer;
-
                  paquete.ParseFromString(buffer.toStdString());
-
                  tamPacket =0;
                  return paquete;
 
@@ -72,6 +68,7 @@ Message ChatWindows::deserializar()
                   //mySocket->sslSocket->readAll();
 
     }
+    paquete.set_type(10);
     return paquete;
 }
 
@@ -263,7 +260,7 @@ void ChatWindows::readyRead()
 
 
         if(sms.type() == 5){
-
+            mySocket->logeado = true;
             qDebug() << "Recibiendo imagenes";
             QBuffer* buffer = new QBuffer;
             buffer->open(QIODevice::ReadWrite);
@@ -284,7 +281,7 @@ void ChatWindows::readyRead()
             //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
             //qDebug() << "El tamaño del avatar es de: " << avatar.size();
 
-            mySocket->logeado = true;
+
         }else if(sms.type() == 2){
             QString mostrar;
             mostrar = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
@@ -292,7 +289,7 @@ void ChatWindows::readyRead()
             ui->textEditReceive->append(mostrar + QString::fromStdString(sms.message()));
             ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
-    }
+   }
 
 
 

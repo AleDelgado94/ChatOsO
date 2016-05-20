@@ -26,12 +26,10 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
                 " ip VARCHAR(20) NOT NULL,"
                 " port INTEGER NOT NULL))");
 
-
 }
 
 void Server::start()
 {
-    //servidor->listen(dir_, port_);
     servidor->listen(QHostAddress(dir_), port_);
     qDebug() << "Listening...";
     qDebug() << "Port: " << port_;
