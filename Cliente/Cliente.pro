@@ -63,14 +63,13 @@ unix {          # Esta configuración específica de Linux y UNIX
 
 
 
-isEmpty(VARDIR) {
+    isEmpty(VARDIR) {
         VARDIR  = /var/lib/$${TARGET}
     }
 
     DEFINES += APP_DATADIR=\\\"$$DATADIR\\\"
     DEFINES += APP_VARDIR=\\\"$$VARDIR\\\"
     DEFINES += APP_CONFFILE=\\\"$$CONFDIR/$${TARGET}.ini\\\"
-    DEFINES += APP_CLAVCERT=\\\$$CONFDIR/$${TARGET}\\\"
 
     # Install
     #
@@ -89,12 +88,11 @@ isEmpty(VARDIR) {
 
     ## Instalar icono de aplicación
     icon32.path = $$DATADIR/icons/hicolor/32x32/apps
-    icon32.files += ./data/32x32/$${TARGET}.png
+    icon32.files += ../data/32x32/$${TARGET}.png
 
 
     ## Crear directorio de archivos variables
     vardir.path = $$VARDIR
-    vardir.extra = mkdir -p $$DATADIR/icon && cp ../Cliente/Icon/* $$DATADIR/icons/hicolor/32x32/apps
     vardir.commands = true
 
 }
