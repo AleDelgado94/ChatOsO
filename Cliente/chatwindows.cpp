@@ -22,6 +22,7 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
     ui->setupUi(this);
 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(this, SIGNAL(rejected()), this, SLOT(cerrando()));
 
     if(!isConnected){
        ui->textEditReceive->setDisabled(true);
@@ -35,6 +36,7 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
 ChatWindows::~ChatWindows()
 {
     delete ui;
+
 }
 
 Message ChatWindows::deserializar()
@@ -54,11 +56,7 @@ Message ChatWindows::deserializar()
                   //Teniendo el tamaño de paquete lo leemos del buffer
               } if ((tamPacket !=0) && (mySocket->sslSocket->bytesAvailable() >=tamPacket )){
                  buffer=mySocket->sslSocket->read(tamPacket);
-
-                 qDebug() << buffer;
-
                  paquete.ParseFromString(buffer.toStdString());
-
                  tamPacket =0;
                  return paquete;
 
@@ -70,6 +68,7 @@ Message ChatWindows::deserializar()
                   //mySocket->sslSocket->readAll();
 
     }
+    paquete.set_type(10);
     return paquete;
 }
 
@@ -260,7 +259,7 @@ void ChatWindows::readyRead()
 
 
         if(sms.type() == 5){
-
+            mySocket->logeado = true;
             qDebug() << "Recibiendo imagenes";
             QBuffer* buffer = new QBuffer;
             buffer->open(QIODevice::ReadWrite);
@@ -281,7 +280,7 @@ void ChatWindows::readyRead()
             //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
             //qDebug() << "El tamaño del avatar es de: " << avatar.size();
 
-            mySocket->logeado = true;
+
         }else if(sms.type() == 2){
             QString imagen;
             QString mensaje;
@@ -292,4 +291,37 @@ void ChatWindows::readyRead()
             ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
     }
+}
+
+void ChatWindows::cerrando()
+{
+    QString mensaje;
+    Message message;
+    std::string mensaje_envio;
+
+    mensaje = ui->lineEditTexTenv->text();
+    message.set_username(mySocket->username.toStdString());
+    message.set_ip("");
+    message.set_port(0);
+    message.set_type(4);
+    message.set_salaname(namesala.toStdString());
+
+    //SERIALIZAMOS LA INFO
+    mensaje_envio = message.SerializeAsString();
+
+    QByteArray pkt(mensaje_envio.c_str(), mensaje_envio.size());
+    //ENVIO del tamaño y paquete
+    quint32 size_packet = pkt.size();
+    QByteArray envio;
+    QDataStream env(&envio, QIODevice::WriteOnly);
+    env.setVersion(7);
+    env << (quint32)size_packet;
+
+    mySocket->sslSocket->write(envio);
+    mySocket->sslSocket->write(pkt);
+    mySocket->sslSocket->waitForBytesWritten();
+
+    mySocket->sslSocket->disconnect();
+
+     qApp->exit();
 }

@@ -19,14 +19,9 @@ My_Socket_Cliente::My_Socket_Cliente(QString dir_server, quint16 port_server, QS
     //sslSocket->ignoreSslErrors();
     sslSocket->setProtocol(QSsl::TlsV1_1);
     sslSocket->connectToHostEncrypted(ip_server, port_server);
-    //qDebug() << sslSocket->socketDescriptor();
-    //qDebug() << sslSocket->state();
-    //connect(sslSocket, SIGNAL(connected()), this, SLOT(ready()));
     connect(sslSocket, SIGNAL(encrypted()), this, SLOT(ready()));
-    //connect(sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(sslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(error()));
-    //sslSocket->bind(my_ip, my_port);//enlazamos socket a ip y puerto (propio)
 
 }
 
@@ -81,10 +76,10 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
     QDataStream env(&envio, QIODevice::WriteOnly);
     env.setVersion(7);
     env << (quint32)size_packet;
-    qDebug() << envio.data();
 
     sslSocket->write(envio);
     sslSocket->write(pkt);
+    sslSocket->waitForBytesWritten(999999999);
 
 
 

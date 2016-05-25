@@ -31,6 +31,7 @@ void signal_handler(int sig){
     switch(sig){
     case SIGTERM:
         syslog(LOG_ERR, "Interceptada señal SIGTERM");
+        closelog();
         exit(0);
         break;
     }
@@ -78,12 +79,15 @@ int main(int argc, char *argv[])
     }
 
     if(!demonio){
+
         quint16 port;
         port = QString::fromStdString(port_option).toUInt();
 
         Server server(QString::fromStdString(ip_option), port);
         server.start();
 
+        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+        syslog(LOG_NOTICE, "Servidor iniciado con éxito\n");
 
         return a.exec();
     }
@@ -91,6 +95,7 @@ int main(int argc, char *argv[])
         //SERVIDOR EJECUTANDO EN MODO DEMONIO
 
         pid_t pid;
+        pid_t sid;
 
         pid = fork();
         //fork() falló
@@ -107,6 +112,21 @@ int main(int argc, char *argv[])
         //A partir de este punto, estamos en el proceso hijo
 
         umask(0);
+
+        //Abrir conexión demonio syslog
+        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+
+        sid = setsid();
+        if(sid < 0){
+            syslog(LOG_ERR, "No fue posible crear una nueva sesión\n");
+            exit(11);
+        }
+        if((chdir("/")) < 0){
+            syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
+            exit(12);
+        }
+
+        //Cerrar descriptores estandar
         close(STDIN_FILENO);    //fd 0
         close(STDOUT_FILENO);   //fd 1
         close(STDERR_FILENO);   //fd 2
@@ -115,30 +135,21 @@ int main(int argc, char *argv[])
         int fd1 = open("/dev/null", O_WRONLY);  //fd1 == 1
         int fd2 = open("/dev/null", O_WRONLY);  //fd2 == 2
 
+    /*
+        passwd* user = getpwnam("ServidorChatOsO");
+        seteuid(user->pw_uid);
 
-        //Abrir conexión demonio syslog
-        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+        group* group_ = getgrnam("ServidorChatOsO");
+        setegid(group_->gr_gid);*/
 
         //Enviar paquete al demonio syslog
         syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
 
-        /*pid_t sid;
-
-        sid = setsid();
-        if(sid < 0){
-            syslog(LOG_ERR, "No fue posible crear una nueva sesión\n");
-            exit(11);
-        }
-        //if((chdir("/")) < 0){
-        //    syslog(LOG_ERR, "No fue posible cambiar el directorio de trabajo\n");
-        //    exit(12);
-        //}
-
-        passwd* user = getpwnam("midemonio");
-        seteuid(user->pw_uid);
-
-        group* group_ = getgrnam("midemonio");
-        setegid(group_->gr_gid);*/
+        // Archivo que contiene identificador de proceso del demonio
+        QFile file("/var/run/ServidorChatOsO.pid");
+        QTextStream out(&file);
+        out << pid;
+        file.close();
 
 
         quint16 port;

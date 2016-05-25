@@ -23,6 +23,7 @@ public:
 
 public slots:
     void readyRead();
+    void cerrando();
 
 private slots:
     void on_pushButtonDesconectar_clicked();

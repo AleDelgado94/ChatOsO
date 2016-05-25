@@ -9,7 +9,7 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
 
     db = new QSqlDatabase("QSQLITE");
     *db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
-    db->setDatabaseName("../Servidor/database.db");
+    db->setDatabaseName("/var/lib/ServidorChatOsO/database/database.db");
 
 
     if(!db->open()){
@@ -26,12 +26,10 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
                 " ip VARCHAR(20) NOT NULL,"
                 " port INTEGER NOT NULL))");
 
-
 }
 
 void Server::start()
 {
-    //servidor->listen(dir_, port_);
     servidor->listen(QHostAddress(dir_), port_);
     qDebug() << "Listening...";
     qDebug() << "Port: " << port_;
