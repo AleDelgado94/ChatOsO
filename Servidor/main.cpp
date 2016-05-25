@@ -31,6 +31,7 @@ void signal_handler(int sig){
     switch(sig){
     case SIGTERM:
         syslog(LOG_ERR, "Interceptada señal SIGTERM");
+        closelog();
         exit(0);
         break;
     }
@@ -79,15 +80,14 @@ int main(int argc, char *argv[])
 
     if(!demonio){
 
-        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
-        syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
-
         quint16 port;
         port = QString::fromStdString(port_option).toUInt();
 
         Server server(QString::fromStdString(ip_option), port);
         server.start();
 
+        openlog(argv[0], LOG_NOWAIT | LOG_PID, LOG_USER);
+        syslog(LOG_NOTICE, "Servidor iniciado con éxito\n");
 
         return a.exec();
     }
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
         syslog(LOG_NOTICE, "Demonio iniciado con éxito\n");
 
         // Archivo que contiene identificador de proceso del demonio
-        QFile file("/var/run/midemoniod.pid");
+        QFile file("/var/run/ServidorChatOsO.pid");
         QTextStream out(&file);
         out << pid;
         file.close();

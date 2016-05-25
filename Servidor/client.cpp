@@ -37,7 +37,9 @@ Message Client::deserializar()
     QByteArray buffer;
     Message paquete;
 
+    qint64 clock_receipt1 = QDateTime::currentMSecsSinceEpoch();
     while(sslSocket_->bytesAvailable() > 0){
+
 
              QDataStream in(sslSocket_);
              in.setVersion(QDataStream::Qt_4_0);
@@ -50,6 +52,8 @@ Message Client::deserializar()
                  buffer=sslSocket_->read(tamPacket);
                  paquete.ParseFromString(buffer.toStdString());
                  tamPacket =0;
+                 quint64 clock_receipt2 = QDateTime::currentMSecsSinceEpoch() - clock_receipt1;
+                 tRecepcionPaquetes.append(clock_receipt2);
                  return paquete;
 
 
@@ -67,16 +71,19 @@ Message Client::deserializar()
 void Client::readyRead()
 {
 
+
     while(sslSocket_->bytesAvailable()){
 
         QTime receiptPaquete;
         receiptPaquete.start();
 
+        //qint64 clock_receipt = QDateTime::currentMSecsSinceEpoch();
+
         Message m;
         m = deserializar();
 
-        if(receiptPaquete.elapsed() > 1)
-            tRecepcionPaquetes.append(receiptPaquete.elapsed());
+        //clock_receipt = QDateTime::currentMSecsSinceEpoch() - clock_receipt;
+        //tRecepcionPaquetes.append(clock_receipt);
 
         if(m.type() == 10)
             return;
@@ -535,7 +542,7 @@ void Client::statistics()
     qDebug() << tEnvioImagenes;
     qDebug() << tEnvioPaquetes;
 
-    if(estadisticas.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if(estadisticas.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         QTextStream stat(&estadisticas);
 
         stat << "TIEMPOS ms\n";

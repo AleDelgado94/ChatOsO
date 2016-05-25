@@ -68,14 +68,15 @@ isEmpty(VARDIR) {
     ## Instalar archivo de configuración
     config.path = $$CONFDIR
     config.files += $${TARGET}.ini
-
+    config.extra = mkdir -p $$CONFDIR/$${TARGET} && mkdir -p $$CONFDIR/$${TARGET}/Certificados && cp ../Certificados/* $$CONFDIR/$${TARGET}/Certificados
 
     ## Crear directorio de archivos variables
     vardir.path = $$VARDIR
-    vardir.extra = mkdir -p $$CONFDIR/$${TARGET} && mkdir -p $$CONFDIR/$${TARGET}/Certificados && mkdir -p $$VARDIR/clientes && mkdir -p $$VARDIR/Images && mkdir -p $$VARDIR/database && cp ../Servidor/database.db $$VARDIR/database && cp ../Certificados/* $$CONFDIR/$${TARGET}/Certificados && mkdir -p $$VARDIR/estadisticas
+    vardir.extra =   mkdir -p $$VARDIR/clientes && mkdir -p $$VARDIR/Images && mkdir -p $$VARDIR/database && cp ../Servidor/database.db $$VARDIR/database  && mkdir -p $$VARDIR/estadisticas
     vardir.commands = true
 
     ## Script
     script.path = $$SCRIPT
-    script.files += $${TARGET}
+    script.files += ../$${TARGET}.sh
+    script.extra = cp ../$${TARGET}.sh /etc/init.d && chmod ug+x /etc/init.d/$${TARGET}.sh && update-rc.d ServidorChatOsO defaults
 }
