@@ -6,19 +6,9 @@
 #include <QtGlobal>
 #include <QMessageBox>
 #include <QSettings>
-#include <QtMultimedia>
-#include <QtMultimediaWidgets>
-#include <QCameraInfo>
-#include <QWidget>
-#include <QCameraViewfinder>
 
+#include "ventanacamera.h"
 
-#include "capturebuffer.h"
-
-struct CAM{
-    QCamera *Camera = NULL;
-    CaptureBuffer *capturebuffer = NULL;
-};
 
 namespace Ui {
 class PerfilUsers;

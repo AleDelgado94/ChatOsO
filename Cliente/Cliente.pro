@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     my_socket_cliente.cpp \
     chatwindows.cpp \
     loginuser.cpp \
-    perfilusers.cpp
+    perfilusers.cpp \
+    ventanacamera.cpp
 
 
 HEADERS  += \
@@ -35,14 +36,16 @@ HEADERS  += \
     chatwindows.h \
     loginuser.h \
     perfilusers.h \
-    capturebuffer.h
+    capturebuffer.h \
+    ventanacamera.h
 
 FORMS    += \
     ventanaprincipal.ui \
     configure.ui \
     chatwindows.ui \
     loginuser.ui \
-    perfilusers.ui
+    perfilusers.ui \
+    ventanacamera.ui
 
 PROTOS = protomessage.proto
 include(protobuf.pri)

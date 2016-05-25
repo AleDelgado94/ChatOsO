@@ -38,7 +38,6 @@ public:
 
         //Código para trabajar con frameAsImage
         frameAsImage.copy();
-        emit s_image(frameAsImage);
         frame2.unmap();
 
 

@@ -63,20 +63,11 @@ void PerfilUsers::on_pushButtonSeleccion_clicked()
 
 void PerfilUsers::on_pushButtonCamaraWeb_clicked()
 {
-    qDebug ()   << "entra";
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    foreach (const QCameraInfo &camerasInfo , cameras) {
-        if(camerasInfo.deviceName() == "/dev/video0"){
-            QCamera* camera = new QCamera(camerasInfo); //Creamos un objeto QCamera para capturar desde la camara web del pc
-            QCameraViewfinder* viewfinder = new QCameraViewfinder();
-            viewfinder->show();
-            viewfinder->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-            camera->setViewfinder(viewfinder);
-            camera->setCaptureMode(QCamera::CaptureVideo);
-            camera->setCaptureMode(QCamera::CaptureViewfinder);
-            camera->start();
-         }
-    }
+    QSettings settings;
+    VentanaCamera cam;
+    cam.exec();
+
+    ui->lineEditAvatar->setText(settings.value("Ruta_My_Avatar").toString());
 
 
 

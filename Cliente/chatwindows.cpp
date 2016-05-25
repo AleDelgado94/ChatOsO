@@ -180,7 +180,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->waitForBytesWritten();
 
         QString pressed;
-        pressed = "<b>" + ui->lineEditTexTenv->text() + "</b>";
+        pressed = "<p style=font-size:50px" + ui->lineEditTexTenv->text() + "</p>";
 
         ui->textEditReceive->append(pressed);
         ui->textEditReceive->setAlignment(Qt::AlignRight);
@@ -283,10 +283,12 @@ void ChatWindows::readyRead()
 
             mySocket->logeado = true;
         }else if(sms.type() == 2){
-            QString mostrar;
-            mostrar = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
-            //TODO: Color y Size letras mensaje
-            ui->textEditReceive->append(mostrar + QString::fromStdString(sms.message()));
+            QString imagen;
+            QString mensaje;
+            imagen = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
+            mensaje = "<p style=font-size:10px>" + QString::fromStdString(sms.message()) + "</p>";
+            //TODO: Color y size(style=font-size:) letras como en html
+            ui->textEditReceive->append(imagen + mensaje);
             ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
     }
