@@ -3,7 +3,7 @@
 
 #include "ventanaprincipal.h"
 #include "my_socket_cliente.h"
-
+#include "sys/stat.h"
 
 #include <QDialog>
 #include <QMessageBox>
@@ -20,6 +20,10 @@ public:
     explicit ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* socket, QWidget *parent = 0);
     ~ChatWindows();
     Message deserializar();
+
+signals:
+    void logueado();
+    void noLogueado();
 
 public slots:
     void readyRead();

@@ -54,6 +54,8 @@ Message Client::deserializar()
                  tamPacket =0;
                  quint64 clock_receipt2 = QDateTime::currentMSecsSinceEpoch() - clock_receipt1;
                  tRecepcionPaquetes.append(clock_receipt2);
+
+                 qDebug() << "bytes leidos completo";
                  return paquete;
 
 
@@ -81,6 +83,8 @@ void Client::readyRead()
 
         Message m;
         m = deserializar();
+
+        qDebug() << m.type();
 
         //clock_receipt = QDateTime::currentMSecsSinceEpoch() - clock_receipt;
         //tRecepcionPaquetes.append(clock_receipt);
@@ -281,6 +285,8 @@ void Client::readyRead()
                     env.setVersion(7);
                     env << (quint32)size_packet;
 
+                    qDebug() << reenvio.type();
+                    qDebug() << QString::fromStdString(mensaje_envio);
 
                     //ENVIAMOS LOS MENSAJES AL USUARIO
                     if(!mensaje_envio.empty()){
@@ -326,7 +332,9 @@ void Client::readyRead()
 
             std::string mensaje;
             mensaje = m.SerializeAsString();
+            qDebug() << "TIPO DEL MEN: " << m.type();
             qDebug() << "El mensaje a reenviar es: " << QString::fromStdString(mensaje);
+            qDebug() << list_clients;
 
 
             QByteArray pkt(mensaje.c_str(), mensaje.size());
@@ -349,7 +357,6 @@ void Client::readyRead()
 
                 if(!mensaje.empty() && envia){
                     QSslSocket *socket = list_clients.value(usuario);
-
                     socket->write(envio);
                     socket->write(pkt);
                 }
@@ -390,13 +397,76 @@ void Client::readyRead()
 
             QSqlQuery query(*db);
 
-            QString consulta =  "SELECT * FROM login WHERE usuario='" + QString::fromStdString(m.username()) +  "'  AND password='" + QString::fromStdString(m.ip()) + "';";
+            QString consulta =  "SELECT usuario FROM login WHERE usuario='" + QString::fromStdString(m.username()) +  "'  AND password='" + QString::fromStdString(m.ip()) + "' ORDER BY usuario LIMIT 1;";
 
 
-            query.exec(consulta);
-            while(query.next()){
-                if(!query.value("usuario").toString().isEmpty()){
+            qDebug() << query.exec(consulta);
 
+
+            //qDebug() << query.value(0).toString();
+            query.seek(0);
+
+            if(query.value(0).toString().isEmpty()){
+                Message confirmacion;
+                confirmacion.set_username(m.username());
+                confirmacion.set_ip("");
+                confirmacion.set_type(12);
+                confirmacion.set_port(0);
+
+
+                std::string message_confirm;
+                message_confirm = confirmacion.SerializeAsString();
+
+                QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                //ENVIO del tamaño y paquete
+                quint32 size_packet = pkt.size();
+                QByteArray envio;
+                QDataStream env(&envio, QIODevice::WriteOnly);
+                env.setVersion(7);
+                env << (quint32)size_packet;
+
+                if(!message_confirm.empty()){
+                    sslSocket_->write(envio);
+                    sslSocket_->write(pkt);
+                }
+
+                sslSocket_->disconnectFromHost();
+                sslSocket_->close();
+            }
+            else{
+            //if(query.first()){
+
+
+            if(!query.value("usuario").toString().isEmpty()){
+
+                //MANDAMOS EL MENSAJE DE CONFIRMACIÓN PARA QUE EL USUARIO PUEDA ACCEDER A LA VENTANA DEL CHAT
+
+                Message confirmacion1;
+                confirmacion1.set_username(m.username());
+                confirmacion1.set_ip("");
+                confirmacion1.set_type(11);
+                confirmacion1.set_port(0);
+
+
+                std::string message_confirm1;
+                message_confirm1 = confirmacion1.SerializeAsString();
+
+                QByteArray pkt1(message_confirm1.c_str(), message_confirm1.size());
+                //ENVIO del tamaño y paquete
+                quint32 size_packet1 = pkt1.size();
+                QByteArray envio1;
+                QDataStream env1(&envio1, QIODevice::WriteOnly);
+                env1.setVersion(7);
+                env1 << (quint32)size_packet1;
+
+                if(!message_confirm1.empty()){
+                    sslSocket_->write(envio1);
+                    sslSocket_->write(pkt1);
+                    list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
+                }
+                qDebug() << list_clients;
+
+                //RECIBIMOS IMAGENES
 
 
                     qDebug() << "Recibiendo imagenes";
@@ -466,7 +536,6 @@ void Client::readyRead()
                                 QString ruta = "/var/lib/ServidorChatOsO/Images/" + dirIt.fileName();
                                 avatar = new QImage();
                                 avatar->load(ruta, "JPG");
-                                qDebug() << ruta;
                                 QByteArray ba;
                                 QBuffer buffer(&ba);
                                 avatar->save(&buffer, "JPG");
@@ -499,20 +568,16 @@ void Client::readyRead()
 
                                     sslSocket_->write(envio);
                                     sslSocket_->write(pkt);
-                                    list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
-
                                 }
-
-                                qDebug() << list_clients;
                             }
                     }
                     if(tEnvImages.elapsed() > 1)
                         tEnvioImagenes.append(tEnvImages.elapsed());
                     qDebug() << tEnvImages.elapsed();
 
-                }else{
-                    sslSocket_->disconnectFromHost();
-                    sslSocket_->close();
+
+
+
                 }
 
             }
@@ -553,7 +618,7 @@ void Client::statistics()
             tRecibido += tRecepcionPaquetes[i];
         }
 
-        stat << "Tiempo medio Recepción de mensaje: " << tRecibido/NumPruebas << "\n";
+        stat << "Tiempo medio Recepción de mensaje: " << tRecibido << "\n";
 
         int tConsultas = 0;
         for(int i=0; i<tConsultasDB.size() && i<NumPruebas; i++){

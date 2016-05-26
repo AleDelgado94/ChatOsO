@@ -35,11 +35,25 @@ VentanaCamera::~VentanaCamera()
 
 void VentanaCamera::on_pushButtonCapturar_clicked()
 {
+
+
     QSettings setting;
-    QString ruta_save = "/home/allbermc/.local/ChatOsO";
+    QString home = getenv("HOME");
+    QString ruta_save(home);
+    ruta_save += "/.local/ChatOsO/Images/foto.jpg";
+
+    QImageEncoderSettings* imageSettings = new QImageEncoderSettings();
+
+    imageSettings->setCodec("image/jpeg");
+    imageSettings->setResolution(160, 120);
+    imageSettings->setQuality(QMultimedia::VeryLowQuality);
+
     imageCapture_ = new QCameraImageCapture(camera);
+    imageCapture_->setEncodingSettings(*imageSettings);
+
     imageCapture_->capture(ruta_save);
-    //ruta_save +=//buscar algo que me devuelva el nombre de la imagen que genero
+
+
     setting.setValue("Ruta_My_Avatar", ruta_save);
 }
 

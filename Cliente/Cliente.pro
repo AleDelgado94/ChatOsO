@@ -4,10 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-QT       += sql
+QT       += core sql
+QT += gui
 QT       += network
 QT       += multimedia multimediawidgets
+QT += widgets
 
 
 PKGCONFIG += openssl
@@ -66,6 +67,7 @@ unix {          # Esta configuración específica de Linux y UNIX
 
 
 
+
     isEmpty(VARDIR) {
         VARDIR  = /var/lib/$${TARGET}
     }
@@ -96,6 +98,8 @@ unix {          # Esta configuración específica de Linux y UNIX
 
     ## Crear directorio de archivos variables
     vardir.path = $$VARDIR
+
+    vardir.extra = mkdir -p ~/.local/ChatOsO/ && mkdir -p ~/.local/ChatOsO/Images && chmod 777 ~/.local/ChatOsO/Images && mkdir -p $$DATADIR/ChatOsO/Usuarios && chmod 777 $$DATADIR/ChatOsO/Usuarios
     vardir.commands = true
 
 }

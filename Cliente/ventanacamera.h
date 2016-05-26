@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QList>
 #include <QtMultimedia>
+#include <QMultimedia>
 #include <QtMultimediaWidgets>
 #include <QCameraInfo>
 #include <QWidget>
@@ -11,6 +12,11 @@
 #include <QCameraImageCapture>
 #include <QSettings>
 #include <QString>
+#include <QImageEncoderSettings>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "capturebuffer.h"
 #include "perfilusers.h"

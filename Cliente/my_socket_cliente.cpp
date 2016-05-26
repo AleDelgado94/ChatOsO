@@ -79,7 +79,6 @@ void My_Socket_Cliente::ready()//solo para enviar mensajes al servidor(logearme,
 
     sslSocket->write(envio);
     sslSocket->write(pkt);
-    sslSocket->waitForBytesWritten(999999999);
 
 
 

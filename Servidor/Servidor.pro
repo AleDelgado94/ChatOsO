@@ -16,7 +16,6 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    myudp.cpp \
     client.cpp \
     sslserver.cpp \
     server.cpp
@@ -30,7 +29,6 @@ PROTOS = protomessage.proto
 include(protobuf.pri)
 
 HEADERS += \
-    myudp.h \
     client.h \
     sslserver.h \
     server.h

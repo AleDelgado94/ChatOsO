@@ -5,6 +5,9 @@ message Message {
 //2 - Recepción y envio del mensaje
 //3 - Actualización del avatar
 //4 - Desconectar
+//5 - Primera Conexión, envio de avatares
+//11 - Logueado
+//12 - No logueado
 
 message Log{
 required string name_user = 1;

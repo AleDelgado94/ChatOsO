@@ -19,10 +19,12 @@ signals:
 
 public slots:
 
+public:
+    QSqlDatabase *db;
 
 private:
     SslServer *servidor;
-    QSqlDatabase *db;
+
     QString dir_;
     quint16 port_;
 

@@ -160,8 +160,6 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         message.set_message(mensaje.toStdString().c_str());
         message.set_salaname(namesala.toStdString());
         message.set_type(2);//Para saber el tipo del paquete
-        //message.set_avatar();
-        //TODO3:Falta envio con avatares.message.set_avatar()
 
         //SERIALIZAMOS LA INFO
         mensaje_envio = message.SerializeAsString();
@@ -179,8 +177,7 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         mySocket->sslSocket->waitForBytesWritten();
 
         QString pressed;
-        pressed = "<p style=font-size:50px" + ui->lineEditTexTenv->text() + "</p>";
-
+        pressed = "<p style=font-size:15px>" + ui->lineEditTexTenv->text() + "</p>";
         ui->textEditReceive->append(pressed);
         ui->textEditReceive->setAlignment(Qt::AlignRight);
         ui->lineEditTexTenv->setText("");
@@ -243,7 +240,6 @@ void ChatWindows::on_pushButtonConectar_clicked()
 
 void ChatWindows::readyRead()
 {
-    qDebug() << "Entrando mensaje";
 
     while(mySocket->sslSocket->bytesAvailable()){
 
@@ -253,14 +249,11 @@ void ChatWindows::readyRead()
 
 
         if(sms.type() == 10){
-            qDebug() << "Entra aqui";
             return;
         }
 
 
         if(sms.type() == 5){
-            mySocket->logeado = true;
-            qDebug() << "Recibiendo imagenes";
             QBuffer* buffer = new QBuffer;
             buffer->open(QIODevice::ReadWrite);
             QByteArray b;
@@ -271,25 +264,45 @@ void ChatWindows::readyRead()
             qDebug() << image.loadFromData(buffer->buffer(), "JPG");
 
 
-            QString ruta("../Cliente/Images/");
+
+            QString ruta("/usr/local/share/ChatOsO/Usuarios/"+ mySocket->username+"/");
+
+            std::string r = ruta.toStdString();
+             mkdir(r.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
             ruta +=  QString::fromStdString(sms.username());
             qDebug() << ruta;
             QImageWriter img(ruta, "jpg");
 
             img.write(image);
-            //avatar_->fromData(QByteArray::fromStdString(sms.avatar()), "JPG");
-            //qDebug() << "El tamaño del avatar es de: " << avatar.size();
-
 
         }else if(sms.type() == 2){
+
+            qDebug() << "Entrando mensaje de otro usuario";
+
+            QString ruta("/usr/local/share/ChatOsO/Usuarios/"+ mySocket->username + "/");
             QString imagen;
             QString mensaje;
-            imagen = "<img width='30' height='30' src='../Cliente/Images/" + QString::fromStdString(sms.username()) + ".jpg'>";
-            mensaje = "<p style=font-size:10px>" + QString::fromStdString(sms.message()) + "</p>";
+            imagen = "<img width='30' height='30' src='"+ ruta + QString::fromStdString(sms.username()) + ".jpg'>";
+            mensaje = "<span style=font-size:15px>" + QString::fromStdString(sms.message()) + "</span>";
             //TODO: Color y size(style=font-size:) letras como en html
-            ui->textEditReceive->append(imagen + mensaje);
+            ui->textEditReceive->append(imagen + "    " + mensaje);
             ui->textEditReceive->setAlignment(Qt::AlignLeft);
         }
+        else if(sms.type() == 11){
+            //EMITIR SEÑAL DE LOGUEADO
+            mySocket->logeado = true;
+            //mySocket->sslSocket->waitForReadyRead(3000);
+            emit logueado();
+
+
+
+        }else if(sms.type() == 12){
+            //EMITIR SEÑAL DE NO LOGUEADO
+            mySocket->logeado = false;
+        }
+        else
+            return;
     }
 }
 

@@ -7,8 +7,7 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
     port_(port)
 {
 
-    db = new QSqlDatabase("QSQLITE");
-    *db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
+    db = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", "SQLITE"));
     db->setDatabaseName("/var/lib/ServidorChatOsO/database/database.db");
 
 

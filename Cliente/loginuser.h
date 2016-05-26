@@ -1,19 +1,21 @@
 #ifndef LOGINUSER_H
 #define LOGINUSER_H
 
+
 #include <iostream>
 #include <QMainWindow>
 #include <QDialog>
 #include <QtSql>
 #include <QMessageBox>
-
-
-#include "chatwindows.h"
 #include "my_socket_cliente.h"
+#include "chatwindows.h"
+
 
 namespace Ui {
 class LoginUser;
 }
+
+class ChatWindows;
 
 class LoginUser : public QDialog
 {
@@ -26,9 +28,15 @@ public:
 private slots:
     void on_pushButtonEntrar_clicked();
 
+public slots:
+    void log();
+    void noLog();
+
+
 private:
     Ui::LoginUser *ui;
     My_Socket_Cliente *mySocket;
+    ChatWindows *chat;
     QString ipserver_;
     quint16 portserver_;
     QString namesala;
