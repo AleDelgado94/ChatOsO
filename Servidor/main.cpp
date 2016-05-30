@@ -54,15 +54,22 @@ int main(int argc, char *argv[])
     std::string ip_option;
     std::string port_option;
 
+    //CONTAMOS CON QUE SIEMPRE SE EJECUTE COMO SUDO
+
+
     if(argc == 1){
 
         ip_option = settings.value("Direccion", "127.0.0.1").toString().toStdString();
         port_option = settings.value("Puerto", 3000).toString().toStdString();
 
 
-
-
-    }else{
+    }
+    else if(argc == 2){
+        ip_option = settings.value("Direccion", "127.0.0.1").toString().toStdString();
+        port_option = settings.value("Puerto", 3000).toString().toStdString();
+        demonio = true;
+    }
+    else{
 
         while( (op = getopt(argc, argv, "ds:p:01")) != -1){
             switch (op){
@@ -72,11 +79,13 @@ int main(int argc, char *argv[])
                 case 'p': port_option = std::string(optarg); break;
                 case 'd': demonio = true; break;
                 case '?': break;
-                default: std::fprintf(stderr, "?? getopt devolvio codigo de error 0%o ??\n", op);
+                default:
+                break;
 
             }
         }
     }
+
 
     if(!demonio){
 

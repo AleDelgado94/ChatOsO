@@ -7,18 +7,22 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    qDebug() << "entra";
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
     foreach (const QCameraInfo &camerasInfo, cameras) {
         if(camerasInfo.deviceName() == "/dev/video0"){
             camera = new QCamera(camerasInfo);//Creamos un objeto QCamera
             viewfinder = new QCameraViewfinder();
-            ui->verticalLayoutCamera->addWidget(viewfinder);
-            viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-            viewfinder->show();
+
             camera->setViewfinder(viewfinder);
             camera->setCaptureMode(QCamera::CaptureStillImage);
-            camera->setCaptureMode(QCamera::CaptureViewfinder);
+            //camera->setCaptureMode(QCamera::CaptureViewfinder);
+            ui->verticalLayout_2->addWidget(viewfinder);
+            ui->pushButtonCapturar->setEnabled(true);
+            ui->pushButtonCancelar->setEnabled(true);
+            //ui->verticalLayoutCamera->addWidget(viewfinder);
+            viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
+            viewfinder->show();
+
             camera->start();
 
         }
@@ -55,6 +59,8 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
 
 
     setting.setValue("Ruta_My_Avatar", ruta_save);
+
+    this->reject();
 }
 
 void VentanaCamera::on_pushButtonCancelar_clicked()

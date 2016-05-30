@@ -4,8 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core sql
-QT += gui
+QT       += core sql gui
 QT       += network
 QT       += multimedia multimediawidgets
 QT += widgets
@@ -78,7 +77,7 @@ unix {          # Esta configuración específica de Linux y UNIX
 
     # Install
     #
-    INSTALLS += target config icon32 desktop vardir
+    INSTALLS += target config icon32 vardir desktop
 
     ## Instalar ejecutable
     target.path = $$BINDIR
@@ -88,17 +87,16 @@ unix {          # Esta configuración específica de Linux y UNIX
     config.files += $${TARGET}.ini
 
     ## Instalar acceso directo en el menú del escritorio
-    desktop.path = $$DATADIR/applications
+    desktop.path = /usr/share/applications
     desktop.files += $${TARGET}.desktop
 
     ## Instalar icono de aplicación
-    icon32.path = $$DATADIR/icons/hicolor/32x32/apps
+    icon32.path = /usr/share/icons/hicolor/32x32/apps
     icon32.files += ../data/32x32/$${TARGET}.png
 
 
     ## Crear directorio de archivos variables
     vardir.path = $$VARDIR
-
     vardir.extra = mkdir -p ~/.local/ChatOsO/ && mkdir -p ~/.local/ChatOsO/Images && chmod 777 ~/.local/ChatOsO/Images && mkdir -p $$DATADIR/ChatOsO/Usuarios && chmod 777 $$DATADIR/ChatOsO/Usuarios
     vardir.commands = true
 

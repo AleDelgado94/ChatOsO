@@ -13,6 +13,7 @@
 #include <QSettings>
 #include <QString>
 #include <QImageEncoderSettings>
+#include <QBoxLayout>
 
 #include <sys/types.h>
 #include <sys/stat.h>
