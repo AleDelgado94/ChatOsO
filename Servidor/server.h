@@ -14,6 +14,7 @@ class Server : public QObject
 public:
     Server(QString dir, quint16 port, QObject *parent = 0);
     void start();
+    ~Server();
 
 signals:
 

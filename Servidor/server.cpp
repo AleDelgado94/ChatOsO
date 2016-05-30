@@ -33,3 +33,10 @@ void Server::start()
     qDebug() << "Listening...";
     qDebug() << "Port: " << port_;
 }
+
+Server::~Server()
+{
+    delete servidor;
+    db->close();
+    delete db;
+}

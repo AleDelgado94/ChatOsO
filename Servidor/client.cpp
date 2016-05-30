@@ -70,6 +70,19 @@ Message Client::deserializar()
     return paquete;
 }
 
+Client::~Client()
+{
+    delete sslSocket_;
+    db->close();
+    delete db;
+    delete avatar;
+    tConsultasDB.clear();
+    tRecepcionPaquetes.clear();
+    tEnvioPaquetes.clear();
+    tEnvioImagenes.clear();
+
+}
+
 void Client::readyRead()
 {
 

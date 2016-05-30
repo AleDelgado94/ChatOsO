@@ -14,6 +14,13 @@ SslServer::SslServer(QString dir, quint16 port, QSqlDatabase *db, QObject *paren
 
 }
 
+SslServer::~SslServer()
+{
+    delete server;
+    db->close();
+    delete db;
+}
+
 
 void SslServer::incomingConnection(qintptr socketDescriptor){
 

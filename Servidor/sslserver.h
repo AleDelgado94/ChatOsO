@@ -16,6 +16,7 @@ class SslServer : public QTcpServer
     Q_OBJECT
 public:
     explicit SslServer(QString dir, quint16 port, QSqlDatabase *db, QObject *parent = 0);
+    ~SslServer();
 
 
 

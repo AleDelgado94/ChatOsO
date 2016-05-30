@@ -31,6 +31,7 @@ class Client : public QObject
 public:
     explicit Client(QSslSocket* sslSocket, QSqlDatabase *db , QObject *parent = 0);
     Message deserializar();
+    ~Client();
 
 signals:
 
