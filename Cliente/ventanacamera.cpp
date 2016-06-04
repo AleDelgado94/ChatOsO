@@ -12,16 +12,15 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
     foreach (const QCameraInfo &camerasInfo, cameras) {
         if(camerasInfo.deviceName() == "/dev/video0"){
             camera = new QCamera(camerasInfo);//Creamos un objeto QCamera
-            viewfinder = new QCameraViewfinder();
 
-            camera->setViewfinder(viewfinder);
-            camera->setCaptureMode(QCamera::CaptureViewfinder);
-            //camera->setCaptureMode(QCamera::CaptureStillImage);
+
+            viewfinder = new QCameraViewfinder();
             ui->verticalLayout_2->addWidget(viewfinder);
-            //ui->verticalLayoutCamera->addWidget(viewfinder);
             viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
             viewfinder->show();
-
+            camera->setViewfinder(viewfinder);
+            camera->setCaptureMode(QCamera::CaptureStillImage);
+            camera->setCaptureMode(QCamera::CaptureViewfinder);
             camera->start();
 
         }
@@ -48,7 +47,6 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
     QImageEncoderSettings* imageSettings = new QImageEncoderSettings();
 
     imageSettings->setCodec("image/jpeg");
-    imageSettings->setResolution(160, 120);
     imageSettings->setQuality(QMultimedia::VeryLowQuality);
 
     imageCapture_ = new QCameraImageCapture(camera);
