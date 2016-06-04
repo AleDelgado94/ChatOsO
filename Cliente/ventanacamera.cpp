@@ -6,6 +6,7 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
     ui(new Ui::VentanaCamera)
 {
     ui->setupUi(this);
+    this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
     foreach (const QCameraInfo &camerasInfo, cameras) {
@@ -14,8 +15,7 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
             viewfinder = new QCameraViewfinder();
 
             camera->setViewfinder(viewfinder);
-            camera->setCaptureMode(QCamera::CaptureStillImage);
-            //camera->setCaptureMode(QCamera::CaptureViewfinder);
+            camera->setCaptureMode(QCamera::CaptureViewfinder);
             ui->verticalLayout_2->addWidget(viewfinder);
             ui->pushButtonCapturar->setEnabled(true);
             ui->pushButtonCancelar->setEnabled(true);
@@ -54,11 +54,13 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
 
     imageCapture_ = new QCameraImageCapture(camera);
     imageCapture_->setEncodingSettings(*imageSettings);
-
     imageCapture_->capture(ruta_save);
 
 
+
     setting.setValue("Ruta_My_Avatar", ruta_save);
+
+
 
     this->reject();
 }

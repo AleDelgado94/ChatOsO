@@ -11,6 +11,7 @@ LoginUser::LoginUser(QString ip_server, quint16 port_server ,QString sala, bool 
     ruta_img_user(ruta_img)
 {
     ui->setupUi(this);
+    this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
 }
 

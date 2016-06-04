@@ -7,7 +7,7 @@ VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
 
 {
     ui->setupUi(this);
-
+    this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 }
 
 VentanaPrincipal::~VentanaPrincipal()

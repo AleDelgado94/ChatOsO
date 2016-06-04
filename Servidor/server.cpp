@@ -12,6 +12,7 @@ Server::Server(QString dir, quint16 port, QObject *parent) :
 
 
     if(!db->open()){
+
         qDebug() << "No se pudo acceder a la base de datos\n";
         exit(1);
     }

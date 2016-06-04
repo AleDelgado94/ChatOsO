@@ -11,6 +11,7 @@ Configure::Configure(QWidget *parent) :
     ui(new Ui::Configure)
 {
     ui->setupUi(this);
+    this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
     QSettings settings;
     ui->lineEditDirServer->setText(settings.value("Dir-Server","127.0.0.1").toString());

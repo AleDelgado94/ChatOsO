@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QMessageBox>
+#include <QIcon>
 
 #include "perfilusers.h"
 #include "configure.h"

@@ -37,7 +37,6 @@ signals:
 
 public slots:
     void ready();
-    void readyRead();
     void error();
 };
 

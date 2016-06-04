@@ -21,12 +21,12 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
 {
 
     ui->setupUi(this);
+    this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
 
     QString titulo("ChatOsO - ");
     titulo += mySocket->username;
     this->setWindowTitle(titulo);
-    qDebug() << this->windowTitle();
 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(this, SIGNAL(rejected()), this, SLOT(cerrando()));
@@ -187,12 +187,6 @@ void ChatWindows::on_lineEditTexTenv_returnPressed()
         ui->lineEditTexTenv->setText("");
 
 
-
-        //ENVIO AL SERVIDOR
-        //mySocket->sslSocket->write(mensaje_envio.c_str(), mensaje_envio.length());
-        //ui->plainTextEditrecive->appendPlainText(ui->lineEditTexTenv->text());
-        //ui->lineEditTexTenv->setText("");
-
     }
     else{
         QMessageBox::critical(NULL, "Error", "Campo de mensaje vacio");
@@ -265,7 +259,7 @@ void ChatWindows::readyRead()
 
             buffer->seek(buffer->pos() - bytes);
             QImage image;
-            qDebug() << image.loadFromData(buffer->buffer(), "JPG");
+            image.loadFromData(buffer->buffer(), "JPG");
 
 
 
@@ -275,14 +269,11 @@ void ChatWindows::readyRead()
              mkdir(r.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
             ruta +=  QString::fromStdString(sms.username());
-            qDebug() << ruta;
             QImageWriter img(ruta, "jpg");
 
             img.write(image);
 
         }else if(sms.type() == 2){
-
-            qDebug() << "Entrando mensaje de otro usuario";
 
             QString ruta("/usr/local/share/ChatOsO/Usuarios/"+ mySocket->username + "/");
             QString imagen;
