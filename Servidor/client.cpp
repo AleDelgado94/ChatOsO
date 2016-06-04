@@ -15,8 +15,6 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
     db(db),
     tamPacket(0)
 {
-    qDebug() << "Creando Cliente";
-
     connect(sslSocket_, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(sslSocket_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
     connect(sslSocket_, SIGNAL(sslErrors(QList<QSslError>)), sslSocket_, SLOT(ignoreSslErrors()));
@@ -25,7 +23,7 @@ Client::Client(QSslSocket *sslSocket, QSqlDatabase *db, QObject *parent) :
 
 
     if(!db->open()){
-        qDebug() << "Error al abrir la base de datos";
+        syslog(LOG_ERR, "Error al abrir la base de datos");
         exit(1);
     }
 
@@ -47,24 +45,19 @@ Message Client::deserializar()
               {
 
                   in >> tamPacket;
-                  qDebug() << "El tamaño del paquete es: " << tamPacket;
               } if ((tamPacket !=0) && (sslSocket_->bytesAvailable() >=tamPacket )){
                  buffer=sslSocket_->read(tamPacket);
                  paquete.ParseFromString(buffer.toStdString());
                  tamPacket =0;
                  quint64 clock_receipt2 = QDateTime::currentMSecsSinceEpoch() - clock_receipt1;
                  tRecepcionPaquetes.append(clock_receipt2);
-
-                 qDebug() << "bytes leidos completo";
                  return paquete;
 
 
              }else{
-                  qDebug() << "Menos bytes";
                   paquete.set_type(10);
                   return paquete;
              }
-                //sslSocket_->readAll();
     }
     paquete.set_type(10);
     return paquete;
@@ -97,8 +90,6 @@ void Client::readyRead()
         Message m;
         m = deserializar();
 
-        qDebug() << m.type();
-
         //clock_receipt = QDateTime::currentMSecsSinceEpoch() - clock_receipt;
         //tRecepcionPaquetes.append(clock_receipt);
 
@@ -130,26 +121,15 @@ void Client::readyRead()
                 QTime tDB;
                 tDB.start();
 
-                qDebug() << query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
-                qDebug() << query.exec();
-                qDebug() << query.executedQuery();
-
+                query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
 
                 QString message_sala = "MESSAGE_" + QString::fromStdString(m.salaname());
-                qDebug() << message_sala;
 
-                qDebug() << query.exec("CREATE TABLE "+ message_sala + " (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT);");
-                //qDebug() << query.exec();
-                qDebug() << query.executedQuery();
-                qDebug() << "Error al crear la tabla mensajes: " << query.lastError();
+                query.exec("CREATE TABLE "+ message_sala + " (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT);");
 
+                query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
 
-
-                qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
-                qDebug() << query.executedQuery();
-                qDebug() << "Error al insertar al usuario: " << query.lastError();
-
-                if(tDB.elapsed() > 1)
+                if(tDB.elapsed() >= 0)
                     tConsultasDB.append(tDB.elapsed());
 
             }
@@ -173,7 +153,6 @@ void Client::readyRead()
                 tEnvioMensajes.start();
 
                 while(query.next()){
-                    qDebug() << "&================";
                     Message reenvio;
                     reenvio.set_message(query.value("mensaje").toString().toStdString());
                     reenvio.set_type(2);
@@ -204,8 +183,7 @@ void Client::readyRead()
 
                 }
 
-                if(tEnvioMensajes.elapsed() > 1){
-                    qDebug() << "Envio de mensajes time: " << tEnvioMensajes.elapsed();
+                if(tEnvioMensajes.elapsed() >= 0){
                     tEnvioPaquetes.append(tEnvioMensajes.elapsed());
                 }
 
@@ -237,7 +215,6 @@ void Client::readyRead()
                 QTime tDB;
                 tDB.start();
 
-                qDebug() << "Creando tablas e insertando";
                 query.exec("CREATE TABLE "+ QString::fromStdString(m.salaname()) +" (usuario VARCHAR(50) PRIMARY KEY NOT NULL, puerto INT NOT NULL, direccion VARCHAR(50)  NOT NULL);");
                 query.exec();
                 query.executedQuery();
@@ -245,17 +222,10 @@ void Client::readyRead()
 
                 QString message_sala = "MESSAGE_" + QString::fromStdString(m.salaname());
 
-                //query.prepare("CREATE TABLE MESSAGE_:salaname (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT)");
-                //query.bindValue(":salaname", QString::fromStdString(m.salaname()));
                 query.exec("CREATE TABLE "+ message_sala + " (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario VARCHAR(50) NOT NULL, mensaje TEXT, foto TEXT);");
-                //qDebug() << query.exec();
+                query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
 
-                qDebug() << query.exec("INSERT INTO " + QString::fromStdString(m.salaname()) + " (usuario, puerto, direccion) VALUES ('" + QString::fromStdString(m.username()) +"', '" + m.port() + "', '" + QString::fromStdString(m.ip()) + "');");
-                //query.exec();
-                qDebug() << query.executedQuery();
-                qDebug() << "Error al insertar al usuario: " << query.lastError();
-
-                if(tDB.elapsed() > 1)
+                if(tDB.elapsed() >= 0)
                     tConsultasDB.append(tDB.elapsed());
 
             }
@@ -298,9 +268,6 @@ void Client::readyRead()
                     env.setVersion(7);
                     env << (quint32)size_packet;
 
-                    qDebug() << reenvio.type();
-                    qDebug() << QString::fromStdString(mensaje_envio);
-
                     //ENVIAMOS LOS MENSAJES AL USUARIO
                     if(!mensaje_envio.empty()){
                         //ENVIO a los clientes
@@ -309,9 +276,7 @@ void Client::readyRead()
 
                     }
                 }
-                qDebug() << "Tiempo de los mensajes: " << tEnvioMensajes.elapsed();
                 if(tEnvioMensajes.elapsed() >= 0){
-                    qDebug() << "Tiempo al reenviar los mensajes" << tEnvioMensajes.elapsed();
                     tEnvioPaquetes.append(tEnvioMensajes.elapsed());
                 }
                 query.exec("DROP VIEW History");
@@ -345,10 +310,6 @@ void Client::readyRead()
 
             std::string mensaje;
             mensaje = m.SerializeAsString();
-            qDebug() << "TIPO DEL MEN: " << m.type();
-            qDebug() << "El mensaje a reenviar es: " << QString::fromStdString(mensaje);
-            qDebug() << list_clients;
-
 
             QByteArray pkt(mensaje.c_str(), mensaje.size());
             //ENVIO del tamaño y paquete
@@ -378,8 +339,6 @@ void Client::readyRead()
             clock = QDateTime::currentMSecsSinceEpoch()-clock;
                 tEnvioPaquetes.append(clock);
 
-            qDebug() << "Tiempo reenvio de mensajes entre usuarios: " << clock;
-
 
         }
             break;
@@ -392,14 +351,10 @@ void Client::readyRead()
             syslog(LOG_NOTICE, log.toStdString().c_str());
             //DESCONEXIÓN. ELIMINACION DE LA SALA
 
-            qDebug() << query.exec("DELETE FROM " + QString::fromStdString(m.salaname()) + " where usuario='" + QString::fromStdString(m.username()) + "';");
-            //sslSocket_->disconnect();
+            query.exec("DELETE FROM " + QString::fromStdString(m.salaname()) + " where usuario='" + QString::fromStdString(m.username()) + "';");
             sslSocket_->disconnectFromHost();
             sslSocket_->close();
-            //sslSocket_->disconnectFromHost();
-            qDebug() << list_clients;
             list_clients.remove(QString::fromStdString(m.username()));
-            qDebug() << list_clients;
 
         }
             break;
@@ -413,10 +368,8 @@ void Client::readyRead()
             QString consulta =  "SELECT usuario FROM login WHERE usuario='" + QString::fromStdString(m.username()) +  "'  AND password='" + QString::fromStdString(m.ip()) + "' ORDER BY usuario LIMIT 1;";
 
 
-            qDebug() << query.exec(consulta);
+            query.exec(consulta);
 
-
-            //qDebug() << query.value(0).toString();
             query.seek(0);
 
             if(query.value(0).toString().isEmpty()){
@@ -447,151 +400,142 @@ void Client::readyRead()
                 sslSocket_->close();
             }
             else{
-            //if(query.first()){
+
+                if(!query.value("usuario").toString().isEmpty()){
+
+                    //MANDAMOS EL MENSAJE DE CONFIRMACIÓN PARA QUE EL USUARIO PUEDA ACCEDER A LA VENTANA DEL CHAT
+
+                    Message confirmacion1;
+                    confirmacion1.set_username(m.username());
+                    confirmacion1.set_ip("");
+                    confirmacion1.set_type(11);
+                    confirmacion1.set_port(0);
 
 
-            if(!query.value("usuario").toString().isEmpty()){
+                    std::string message_confirm1;
+                    message_confirm1 = confirmacion1.SerializeAsString();
 
-                //MANDAMOS EL MENSAJE DE CONFIRMACIÓN PARA QUE EL USUARIO PUEDA ACCEDER A LA VENTANA DEL CHAT
-
-                Message confirmacion1;
-                confirmacion1.set_username(m.username());
-                confirmacion1.set_ip("");
-                confirmacion1.set_type(11);
-                confirmacion1.set_port(0);
-
-
-                std::string message_confirm1;
-                message_confirm1 = confirmacion1.SerializeAsString();
-
-                QByteArray pkt1(message_confirm1.c_str(), message_confirm1.size());
-                //ENVIO del tamaño y paquete
-                quint32 size_packet1 = pkt1.size();
-                QByteArray envio1;
-                QDataStream env1(&envio1, QIODevice::WriteOnly);
-                env1.setVersion(7);
-                env1 << (quint32)size_packet1;
-
-                if(!message_confirm1.empty()){
-                    sslSocket_->write(envio1);
-                    sslSocket_->write(pkt1);
-                    list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
-                }
-                qDebug() << list_clients;
-
-                //RECIBIMOS IMAGENES
-
-
-                    qDebug() << "Recibiendo imagenes";
-                    QBuffer* buffer = new QBuffer;
-                    buffer->open(QIODevice::ReadWrite);
-                    QByteArray b;
-                    quint64 bytes = buffer->write(QByteArray::fromBase64(m.avatar().data()));
-
-                    buffer->seek(buffer->pos() - bytes);
-                    QImage image;
-                    image.loadFromData(buffer->buffer(), "JPG");
-
-
-                    QString ruta("/var/lib/ServidorChatOsO/Images/");
-                    ruta +=  QString::fromStdString(m.username());
-                    ruta += ".jpg";
-                    qDebug() << "La ruta de la imagen es: " << ruta;
-                    QImageWriter img(ruta, "jpg");
-
-                    img.write(image);
-
-                    //MANDAR LA NUEVA IMAGEN A LOS USUARIOS CONECTADOS ANTERIORMENTE
-
-                    QByteArray ba2;
-                    QBuffer buffer2(&ba2);
-                    image.save(&buffer2, "JPG");
-
-
-                    Message confirmacion;
-                    confirmacion.set_username(m.username()+".jpg");
-                    confirmacion.set_ip("");
-                    confirmacion.set_type(5);
-                    confirmacion.set_port(0);
-                    confirmacion.set_avatar(ba2.toBase64().data());
-
-
-                    std::string message_confirm;
-                    message_confirm = confirmacion.SerializeAsString();
-
-                    QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                    QByteArray pkt1(message_confirm1.c_str(), message_confirm1.size());
                     //ENVIO del tamaño y paquete
-                    quint32 size_packet = pkt.size();
-                    QByteArray envio;
-                    QDataStream env(&envio, QIODevice::WriteOnly);
-                    env.setVersion(7);
-                    env << (quint32)size_packet;
+                    quint32 size_packet1 = pkt1.size();
+                    QByteArray envio1;
+                    QDataStream env1(&envio1, QIODevice::WriteOnly);
+                    env1.setVersion(7);
+                    env1 << (quint32)size_packet1;
 
-                    QMap<QString, QSslSocket*>::iterator i;
-                    for(i = list_clients.begin(); i != list_clients.end(); ++i){
-                        QSslSocket *socket = i.value();
-
-                        socket->write(envio);
-                        socket->write(pkt);
-
+                    if(!message_confirm1.empty()){
+                        sslSocket_->write(envio1);
+                        sslSocket_->write(pkt1);
+                        list_clients.insert(QString::fromStdString(m.username()), sslSocket_);
                     }
 
-                    //**************************************************************
+                    //RECIBIMOS IMAGENES
 
-                    QDirIterator dirIt("/var/lib/ServidorChatOsO/Images/", QDirIterator::Subdirectories);
-                    QTime tEnvImages;
-                    tEnvImages.start();
-                    while(dirIt.hasNext()){
-                        dirIt.next();
-                        if(QFileInfo(dirIt.filePath()).isFile())
-                            if(QFileInfo(dirIt.filePath()).suffix() == "jpg" || QFileInfo(dirIt.filePath()).suffix() == "jpeg" )
-                            {
-                                QString ruta = "/var/lib/ServidorChatOsO/Images/" + dirIt.fileName();
-                                avatar = new QImage();
-                                avatar->load(ruta, "JPG");
-                                QByteArray ba;
-                                QBuffer buffer(&ba);
-                                avatar->save(&buffer, "JPG");
+                        QBuffer* buffer = new QBuffer;
+                        buffer->open(QIODevice::ReadWrite);
+                        QByteArray b;
+                        quint64 bytes = buffer->write(QByteArray::fromBase64(m.avatar().data()));
+
+                        buffer->seek(buffer->pos() - bytes);
+                        QImage image;
+                        image.loadFromData(buffer->buffer(), "JPG");
 
 
-                                Message confirmacion;
-                                confirmacion.set_username(dirIt.fileName().toStdString());
-                                confirmacion.set_ip("");
-                                confirmacion.set_type(5);
-                                confirmacion.set_port(0);
-                                confirmacion.set_avatar(ba.toBase64().data());
+                        QString ruta("/var/lib/ServidorChatOsO/Images/");
+                        ruta +=  QString::fromStdString(m.username());
+                        ruta += ".jpg";
+                        QImageWriter img(ruta, "jpg");
+
+                        img.write(image);
+
+                        //MANDAR LA NUEVA IMAGEN A LOS USUARIOS CONECTADOS ANTERIORMENTE
+
+                        QByteArray ba2;
+                        QBuffer buffer2(&ba2);
+                        image.save(&buffer2, "JPG");
 
 
-                                std::string message_confirm;
-                                message_confirm = confirmacion.SerializeAsString();
-
-                                QByteArray pkt(message_confirm.c_str(), message_confirm.size());
-                                //ENVIO del tamaño y paquete
-                                quint32 size_packet = pkt.size();
-                                QByteArray envio;
-                                QDataStream env(&envio, QIODevice::WriteOnly);
-                                env.setVersion(7);
-                                env << (quint32)size_packet;
-
-                                qDebug() << message_confirm.size();
+                        Message confirmacion;
+                        confirmacion.set_username(m.username()+".jpg");
+                        confirmacion.set_ip("");
+                        confirmacion.set_type(5);
+                        confirmacion.set_port(0);
+                        confirmacion.set_avatar(ba2.toBase64().data());
 
 
+                        std::string message_confirm;
+                        message_confirm = confirmacion.SerializeAsString();
 
-                                if(!message_confirm.empty()){
+                        QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                        //ENVIO del tamaño y paquete
+                        quint32 size_packet = pkt.size();
+                        QByteArray envio;
+                        QDataStream env(&envio, QIODevice::WriteOnly);
+                        env.setVersion(7);
+                        env << (quint32)size_packet;
 
-                                    sslSocket_->write(envio);
-                                    sslSocket_->write(pkt);
+                        QMap<QString, QSslSocket*>::iterator i;
+                        for(i = list_clients.begin(); i != list_clients.end(); ++i){
+                            QSslSocket *socket = i.value();
+
+                            socket->write(envio);
+                            socket->write(pkt);
+
+                        }
+
+                        //**************************************************************
+
+                        QDirIterator dirIt("/var/lib/ServidorChatOsO/Images/", QDirIterator::Subdirectories);
+                        QTime tEnvImages;
+                        tEnvImages.start();
+                        while(dirIt.hasNext()){
+                            dirIt.next();
+                            if(QFileInfo(dirIt.filePath()).isFile())
+                                if(QFileInfo(dirIt.filePath()).suffix() == "jpg" || QFileInfo(dirIt.filePath()).suffix() == "jpeg" )
+                                {
+                                    QString ruta = "/var/lib/ServidorChatOsO/Images/" + dirIt.fileName();
+                                    avatar = new QImage();
+                                    avatar->load(ruta, "JPG");
+                                    QByteArray ba;
+                                    QBuffer buffer(&ba);
+                                    avatar->save(&buffer, "JPG");
+
+
+                                    Message confirmacion;
+                                    confirmacion.set_username(dirIt.fileName().toStdString());
+                                    confirmacion.set_ip("");
+                                    confirmacion.set_type(5);
+                                    confirmacion.set_port(0);
+                                    confirmacion.set_avatar(ba.toBase64().data());
+
+
+                                    std::string message_confirm;
+                                    message_confirm = confirmacion.SerializeAsString();
+
+                                    QByteArray pkt(message_confirm.c_str(), message_confirm.size());
+                                    //ENVIO del tamaño y paquete
+                                    quint32 size_packet = pkt.size();
+                                    QByteArray envio;
+                                    QDataStream env(&envio, QIODevice::WriteOnly);
+                                    env.setVersion(7);
+                                    env << (quint32)size_packet;
+
+
+                                    if(!message_confirm.empty()){
+
+                                        sslSocket_->write(envio);
+                                        sslSocket_->write(pkt);
+                                    }
                                 }
-                            }
+                        }
+                        if(tEnvImages.elapsed() > 1)
+                            tEnvioImagenes.append(tEnvImages.elapsed());
+
+
+
+
+
                     }
-                    if(tEnvImages.elapsed() > 1)
-                        tEnvioImagenes.append(tEnvImages.elapsed());
-                    qDebug() << tEnvImages.elapsed();
-
-
-
-
-                }
 
             }
 
@@ -605,7 +549,11 @@ void Client::readyRead()
 }
 
 void Client::error(){
-    qDebug() << "Error\n";
+    QString err("Error en el socket del cliente nº ");
+    err += sslSocket_->socketDescriptor();
+    err += " descriptor";
+
+    syslog(LOG_ERR, err.toStdString().c_str());
 }
 
 void Client::statistics()
@@ -615,40 +563,35 @@ void Client::statistics()
     ruta_estadistica += ".txt";
     QFile estadisticas(ruta_estadistica);
 
-    qDebug() << tRecepcionPaquetes;
-    qDebug() << tConsultasDB;
-    qDebug() << tEnvioImagenes;
-    qDebug() << tEnvioPaquetes;
 
     if(estadisticas.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         QTextStream stat(&estadisticas);
 
         stat << "TIEMPOS ms\n";
-        stat << "PRUEBAS: " << NumPruebas << "\n";
 
         int tRecibido = 0;
-        for(int i=0; i<tRecepcionPaquetes.size() && i<NumPruebas; i++){
+        for(int i=0; i<tRecepcionPaquetes.size(); i++){
             tRecibido += tRecepcionPaquetes[i];
         }
 
-        stat << "Tiempo medio Recepción de mensaje: " << tRecibido << "\n";
+        stat << "Tiempo Recepción de mensaje: " << tRecibido << "\n";
 
         int tConsultas = 0;
-        for(int i=0; i<tConsultasDB.size() && i<NumPruebas; i++){
+        for(int i=0; i<tConsultasDB.size(); i++){
             tConsultas += tConsultasDB[i];
         }
 
-        stat << "Tiempo medio Consultas en la Base de Datos: " << tConsultas/NumPruebas << "\n";
+        stat << "Tiempo Consultas en la Base de Datos: " << tConsultas << "\n";
 
         int tImagenes = 0;
-        for(int i=0; i<tEnvioImagenes.size() && i<NumPruebas; i++){
+        for(int i=0; i<tEnvioImagenes.size(); i++){
             tImagenes += tEnvioImagenes[i];
         }
 
         stat << "Tiempo Envio de Imagenes: " << tImagenes << "\n";
 
         int tEnvPaquetes = 0;
-        for(int i=0; i<tEnvioPaquetes.size() && i<NumPruebas; i++){
+        for(int i=0; i<tEnvioPaquetes.size(); i++){
             tEnvPaquetes += tEnvioPaquetes[i];
         }
 

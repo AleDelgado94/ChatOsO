@@ -24,8 +24,6 @@ SslServer::~SslServer()
 
 void SslServer::incomingConnection(qintptr socketDescriptor){
 
-    qDebug() << "Nueva Conexión";
-
     QSslSocket* socket = new QSslSocket();
 
     if(socket->setSocketDescriptor(socketDescriptor)){
