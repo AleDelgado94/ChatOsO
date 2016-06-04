@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QProcess>
 #include <QSettings>
+#include <QMessageBox>
 
 #include "perfilusers.h"
 #include "configure.h"

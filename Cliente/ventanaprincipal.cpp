@@ -63,6 +63,11 @@ void VentanaPrincipal::on_pushButtonConectar_clicked()
     QString nombre_sala;
     QSettings settings;
 
+    if(ui->lineEditConectsalas->text().isEmpty() && ui->lineEditCrearsalas->text().isEmpty()){
+        QMessageBox::critical(NULL, "Error", "Campos de sala vacios");
+        return;
+    }
+
     if(!ui->lineEditConectsalas->text().isEmpty()){
        conectarsala=true;
     }

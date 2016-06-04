@@ -19,7 +19,14 @@ ChatWindows::ChatWindows(bool crear_sala, QString name_sala, My_Socket_Cliente* 
     mySocket(socket),
     tamPacket(0)
 {
+
     ui->setupUi(this);
+
+
+    QString titulo("ChatOsO - ");
+    titulo += mySocket->username;
+    this->setWindowTitle(titulo);
+    qDebug() << this->windowTitle();
 
     connect(mySocket->sslSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(this, SIGNAL(rejected()), this, SLOT(cerrando()));
@@ -52,7 +59,6 @@ Message ChatWindows::deserializar()
               {
                   //Guardamos el tamaño del paquete
                   in >> tamPacket;
-                  qDebug() << tamPacket;
                   //Teniendo el tamaño de paquete lo leemos del buffer
               } if ((tamPacket !=0) && (mySocket->sslSocket->bytesAvailable() >=tamPacket )){
                  buffer=mySocket->sslSocket->read(tamPacket);
@@ -61,11 +67,9 @@ Message ChatWindows::deserializar()
                  return paquete;
 
              }else{
-                  qDebug() << "Llegan menos bytes";
                   paquete.set_type(10);
                   return paquete;
               }
-                  //mySocket->sslSocket->readAll();
 
     }
     paquete.set_type(10);

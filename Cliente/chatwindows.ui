@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>ChatWindows</string>
+   <string notr="true"/>
   </property>
   <widget class="QLineEdit" name="lineEditTexTenv">
    <property name="geometry">
