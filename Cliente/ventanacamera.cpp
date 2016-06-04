@@ -16,9 +16,8 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
 
             camera->setViewfinder(viewfinder);
             camera->setCaptureMode(QCamera::CaptureViewfinder);
+            //camera->setCaptureMode(QCamera::CaptureStillImage);
             ui->verticalLayout_2->addWidget(viewfinder);
-            ui->pushButtonCapturar->setEnabled(true);
-            ui->pushButtonCancelar->setEnabled(true);
             //ui->verticalLayoutCamera->addWidget(viewfinder);
             viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
             viewfinder->show();
@@ -44,7 +43,7 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
     QSettings setting;
     QString home = getenv("HOME");
     QString ruta_save(home);
-    ruta_save += "/.local/ChatOsO/Images/foto.jpg";
+    ruta_save += "/.local/ChatOsO/Images/foto.jpeg";
 
     QImageEncoderSettings* imageSettings = new QImageEncoderSettings();
 
@@ -55,7 +54,6 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
     imageCapture_ = new QCameraImageCapture(camera);
     imageCapture_->setEncodingSettings(*imageSettings);
     imageCapture_->capture(ruta_save);
-
 
 
     setting.setValue("Ruta_My_Avatar", ruta_save);
