@@ -79,7 +79,9 @@ OBJECTS       = object/main.o \
 		object/moc_loginuser.o \
 		object/moc_perfilusers.o \
 		object/moc_ventanacamera.o
-DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
+DIST          = ChatOsO.desktop \
+		ChatOsO.ini \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf \
@@ -615,6 +617,15 @@ uninstall_target: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/usr/local/bin/ 
 
 
+install_config: first FORCE
+	@test -d $(INSTALL_ROOT)/etc || mkdir -p $(INSTALL_ROOT)/etc
+	-$(INSTALL_FILE) /home/aledelgado/git/SOA/ChatOsO/Cliente/ChatOsO.ini $(INSTALL_ROOT)/etc/
+
+uninstall_config: FORCE
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/etc/ChatOsO.ini
+	-$(DEL_DIR) $(INSTALL_ROOT)/etc/ 
+
+
 install_icon32: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps || mkdir -p $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps
 	-$(INSTALL_FILE) /home/aledelgado/git/SOA/ChatOsO/data/32x32/ChatOsO.png $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps/
@@ -629,9 +640,18 @@ install_vardir: first FORCE
 	mkdir -p ~/.local/ChatOsO/ && mkdir -p ~/.local/ChatOsO/Images && chmod 777 ~/.local/ChatOsO/Images && mkdir -p /usr/local/share/ChatOsO/Usuarios && chmod 777 /usr/local/share/ChatOsO/Usuarios
 
 
-install: install_target install_icon32 install_vardir  FORCE
+install_desktop: first FORCE
+	@test -d $(INSTALL_ROOT)/usr/share/applications || mkdir -p $(INSTALL_ROOT)/usr/share/applications
+	-$(INSTALL_FILE) /home/aledelgado/git/SOA/ChatOsO/Cliente/ChatOsO.desktop $(INSTALL_ROOT)/usr/share/applications/
 
-uninstall: uninstall_target uninstall_icon32  FORCE
+uninstall_desktop: FORCE
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/usr/share/applications/ChatOsO.desktop
+	-$(DEL_DIR) $(INSTALL_ROOT)/usr/share/applications/ 
+
+
+install: install_target install_config install_icon32 install_vardir install_desktop  FORCE
+
+uninstall: uninstall_target uninstall_config uninstall_icon32 uninstall_desktop  FORCE
 
 FORCE:
 

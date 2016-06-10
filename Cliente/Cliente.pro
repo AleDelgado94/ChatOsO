@@ -102,4 +102,8 @@ unix {          # Esta configuración específica de Linux y UNIX
 
 }
 
+DISTFILES += \
+    ChatOsO.desktop \
+    ChatOsO.ini
+
 
