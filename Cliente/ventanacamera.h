@@ -42,6 +42,8 @@ private slots:
 
     void on_pushButtonCancelar_clicked();
 
+    void captureError(int id ,QCameraImageCapture::Error error, QString errorString);
+
 private:
     Ui::VentanaCamera *ui;
     QCameraImageCapture* imageCapture_;

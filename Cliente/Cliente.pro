@@ -7,7 +7,7 @@
 QT       += core sql gui
 QT       += network
 QT       += multimedia multimediawidgets
-QT += widgets
+
 
 
 PKGCONFIG += openssl
@@ -88,7 +88,7 @@ unix {          # Esta configuración específica de Linux y UNIX
 
     ## Instalar acceso directo en el menú del escritorio
     desktop.path = /usr/share/applications
-    desktop.files += $${TARGET}.desktop
+    desktop.files += ./$${TARGET}.desktop
 
     ## Instalar icono de aplicación
     icon32.path = /usr/share/icons/hicolor/32x32/apps

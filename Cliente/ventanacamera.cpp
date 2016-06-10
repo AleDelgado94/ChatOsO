@@ -8,30 +8,23 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    foreach (const QCameraInfo &camerasInfo, cameras) {
-        if(camerasInfo.deviceName() == "/dev/video0"){
-            camera = new QCamera(camerasInfo);//Creamos un objeto QCamera
+    QPushButton* button = new QPushButton("hola", this);
+    ui->verticalLayout->addWidget(button);
 
+    QCameraInfo camerasInfo("/dev/video0");
+    camera = new QCamera(camerasInfo, this);//Creamos un objeto QCamera
+    viewfinder = new QCameraViewfinder(this);
+    ui->verticalLayout->addWidget(viewfinder);
 
-            viewfinder = new QCameraViewfinder();
-            ui->verticalLayout_2->addWidget(viewfinder);
-            viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-            viewfinder->show();
-            camera->setViewfinder(viewfinder);
-            camera->setCaptureMode(QCamera::CaptureStillImage);
-            camera->setCaptureMode(QCamera::CaptureViewfinder);
-            camera->start();
-
-        }
-    }
+  //  viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
+    camera->setViewfinder(viewfinder);
+    camera->setCaptureMode(QCamera::CaptureStillImage);
+    camera->start();
 }
 
 VentanaCamera::~VentanaCamera()
 {
     delete ui;
-    delete viewfinder;
-    delete camera;
 }
 
 
@@ -53,12 +46,19 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
     imageCapture_->setEncodingSettings(*imageSettings);
     imageCapture_->capture(ruta_save);
 
+    connect(imageCapture_, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this, SLOT(captureError(int,QCameraImageCapture::Error,QString)));
+
 
     setting.setValue("Ruta_My_Avatar", ruta_save);
 
 
 
-    this->reject();
+   // this->reject();
+}
+
+void VentanaCamera::captureError(int id ,QCameraImageCapture::Error error, QString errorString)
+{
+    qDebug() << errorString;
 }
 
 void VentanaCamera::on_pushButtonCancelar_clicked()
