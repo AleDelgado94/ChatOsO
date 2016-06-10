@@ -44,6 +44,8 @@ private slots:
 
     void captureError(int id ,QCameraImageCapture::Error error, QString errorString);
 
+    void imagen_capturada();
+
 private:
     Ui::VentanaCamera *ui;
     QCameraImageCapture* imageCapture_;

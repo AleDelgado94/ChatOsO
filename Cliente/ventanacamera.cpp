@@ -51,14 +51,18 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
 
     setting.setValue("Ruta_My_Avatar", ruta_save);
 
+    connect(imageCapture_, SIGNAL(imageSaved(int,QString)), this, SLOT(imagen_capturada()));
 
-
-   // this->reject();
 }
 
 void VentanaCamera::captureError(int id ,QCameraImageCapture::Error error, QString errorString)
 {
     qDebug() << errorString;
+}
+
+void VentanaCamera::imagen_capturada()
+{
+    this->reject();
 }
 
 void VentanaCamera::on_pushButtonCancelar_clicked()

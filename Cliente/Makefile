@@ -617,15 +617,6 @@ uninstall_target: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/usr/local/bin/ 
 
 
-install_config: first FORCE
-	@test -d $(INSTALL_ROOT)/etc || mkdir -p $(INSTALL_ROOT)/etc
-	-$(INSTALL_FILE) /home/aledelgado/git/SOA/ChatOsO/Cliente/ChatOsO.ini $(INSTALL_ROOT)/etc/
-
-uninstall_config: FORCE
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/etc/ChatOsO.ini
-	-$(DEL_DIR) $(INSTALL_ROOT)/etc/ 
-
-
 install_icon32: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps || mkdir -p $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps
 	-$(INSTALL_FILE) /home/aledelgado/git/SOA/ChatOsO/data/32x32/ChatOsO.png $(INSTALL_ROOT)/usr/share/icons/hicolor/32x32/apps/
@@ -649,9 +640,9 @@ uninstall_desktop: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/usr/share/applications/ 
 
 
-install: install_target install_config install_icon32 install_vardir install_desktop  FORCE
+install: install_target install_icon32 install_vardir install_desktop  FORCE
 
-uninstall: uninstall_target uninstall_config uninstall_icon32 uninstall_desktop  FORCE
+uninstall: uninstall_target uninstall_icon32 uninstall_desktop  FORCE
 
 FORCE:
 

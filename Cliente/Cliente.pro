@@ -77,7 +77,7 @@ unix {          # Esta configuración específica de Linux y UNIX
 
     # Install
     #
-    INSTALLS += target config icon32 vardir desktop
+    INSTALLS += target icon32 vardir desktop
 
     ## Instalar ejecutable
     target.path = $$BINDIR
