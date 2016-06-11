@@ -8,6 +8,7 @@
 #include <QSettings>
 
 #include "ventanacamera.h"
+#include "camerawindow.h"
 
 
 namespace Ui {

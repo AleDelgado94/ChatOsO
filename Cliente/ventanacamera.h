@@ -40,8 +40,6 @@ private slots:
 
     void on_pushButtonCapturar_clicked();
 
-    void on_pushButtonCancelar_clicked();
-
     void captureError(int id ,QCameraImageCapture::Error error, QString errorString);
 
     void imagen_capturada();

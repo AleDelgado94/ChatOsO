@@ -65,6 +65,7 @@ void PerfilUsers::on_pushButtonCamaraWeb_clicked()
 {
     QSettings settings;
     VentanaCamera cam;
+    //CameraWindow cam;
     cam.exec();
 
     ui->lineEditAvatar->setText(settings.value("Ruta_My_Avatar").toString());

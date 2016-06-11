@@ -8,9 +8,6 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowIcon(QIcon("/usr/share/icons/hicolor/32x32/apps/ChatOsO.png"));
 
-    QPushButton* button = new QPushButton("hola", this);
-    ui->verticalLayout->addWidget(button);
-
     QCameraInfo camerasInfo("/dev/video0");
     camera = new QCamera(camerasInfo, this);//Creamos un objeto QCamera
     viewfinder = new QCameraViewfinder(this);
@@ -19,7 +16,12 @@ VentanaCamera::VentanaCamera(QWidget *parent) :
   //  viewfinder->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
     camera->setViewfinder(viewfinder);
     camera->setCaptureMode(QCamera::CaptureStillImage);
+
     camera->start();
+
+    auto mensaje = QMessageBox::information(this, "Capturar", "Apretar Enter o botón Capturar para capturar la imagen");
+
+
 }
 
 VentanaCamera::~VentanaCamera()
@@ -35,19 +37,14 @@ void VentanaCamera::on_pushButtonCapturar_clicked()
     QSettings setting;
     QString home = getenv("HOME");
     QString ruta_save(home);
-    ruta_save += "/.local/ChatOsO/Images/foto.jpeg";
+    ruta_save += "/.local/ChatOsO/Images/foto.jpg";
 
-    QImageEncoderSettings* imageSettings = new QImageEncoderSettings();
-
-    imageSettings->setCodec("image/jpeg");
-    imageSettings->setQuality(QMultimedia::VeryLowQuality);
+    QImageEncoderSettings imageSettings;
 
     imageCapture_ = new QCameraImageCapture(camera);
-    imageCapture_->setEncodingSettings(*imageSettings);
+
     imageCapture_->capture(ruta_save);
-
     connect(imageCapture_, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this, SLOT(captureError(int,QCameraImageCapture::Error,QString)));
-
 
     setting.setValue("Ruta_My_Avatar", ruta_save);
 
@@ -65,7 +62,3 @@ void VentanaCamera::imagen_capturada()
     this->reject();
 }
 
-void VentanaCamera::on_pushButtonCancelar_clicked()
-{
-    this->reject();
-}

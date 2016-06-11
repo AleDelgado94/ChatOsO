@@ -7,6 +7,8 @@
 QT       += core sql gui
 QT       += network
 QT       += multimedia multimediawidgets
+CONFIG += c++11
+
 
 
 
@@ -26,7 +28,8 @@ SOURCES += main.cpp\
     chatwindows.cpp \
     loginuser.cpp \
     perfilusers.cpp \
-    ventanacamera.cpp
+    ventanacamera.cpp \
+    camerawindow.cpp
 
 
 HEADERS  += \
@@ -37,7 +40,8 @@ HEADERS  += \
     loginuser.h \
     perfilusers.h \
     capturebuffer.h \
-    ventanacamera.h
+    ventanacamera.h \
+    camerawindow.h
 
 FORMS    += \
     ventanaprincipal.ui \
@@ -45,7 +49,8 @@ FORMS    += \
     chatwindows.ui \
     loginuser.ui \
     perfilusers.ui \
-    ventanacamera.ui
+    ventanacamera.ui \
+    camerawindow.ui
 
 PROTOS = protomessage.proto
 include(protobuf.pri)

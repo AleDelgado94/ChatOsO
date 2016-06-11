@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DAPP_DATADIR=\"/usr/local/share\" -DAPP_VARDIR=\"/var/lib/ChatOsO\" -DAPP_CONFFILE=\"/etc/ChatOsO.ini\" -DQT_NO_DEBUG -DQT_MULTIMEDIAWIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SQL_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -m64 -pipe -O2 -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtMultimediaWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtMultimedia -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtSql -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Imoc -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 DEL_FILE      = rm -f
@@ -55,14 +55,16 @@ SOURCES       = main.cpp \
 		chatwindows.cpp \
 		loginuser.cpp \
 		perfilusers.cpp \
-		ventanacamera.cpp protomessage.pb.cc \
+		ventanacamera.cpp \
+		camerawindow.cpp protomessage.pb.cc \
 		moc/moc_ventanaprincipal.cpp \
 		moc/moc_configure.cpp \
 		moc/moc_my_socket_cliente.cpp \
 		moc/moc_chatwindows.cpp \
 		moc/moc_loginuser.cpp \
 		moc/moc_perfilusers.cpp \
-		moc/moc_ventanacamera.cpp
+		moc/moc_ventanacamera.cpp \
+		moc/moc_camerawindow.cpp
 OBJECTS       = object/main.o \
 		object/ventanaprincipal.o \
 		object/configure.o \
@@ -71,6 +73,7 @@ OBJECTS       = object/main.o \
 		object/loginuser.o \
 		object/perfilusers.o \
 		object/ventanacamera.o \
+		object/camerawindow.o \
 		object/protomessage.pb.o \
 		object/moc_ventanaprincipal.o \
 		object/moc_configure.o \
@@ -78,7 +81,8 @@ OBJECTS       = object/main.o \
 		object/moc_chatwindows.o \
 		object/moc_loginuser.o \
 		object/moc_perfilusers.o \
-		object/moc_ventanacamera.o
+		object/moc_ventanacamera.o \
+		object/moc_camerawindow.o
 DIST          = ChatOsO.desktop \
 		ChatOsO.ini \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -145,6 +149,7 @@ DIST          = ChatOsO.desktop \
 		protobuf.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/c++11.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
@@ -163,14 +168,16 @@ DIST          = ChatOsO.desktop \
 		loginuser.h \
 		perfilusers.h \
 		capturebuffer.h \
-		ventanacamera.h main.cpp \
+		ventanacamera.h \
+		camerawindow.h main.cpp \
 		ventanaprincipal.cpp \
 		configure.cpp \
 		my_socket_cliente.cpp \
 		chatwindows.cpp \
 		loginuser.cpp \
 		perfilusers.cpp \
-		ventanacamera.cpp
+		ventanacamera.cpp \
+		camerawindow.cpp
 QMAKE_TARGET  = ChatOsO
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = ChatOsO
@@ -198,7 +205,7 @@ first: all
 
 ####### Build rules
 
-$(TARGET): ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h $(OBJECTS)  
+$(TARGET): ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h ui_camerawindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: Cliente.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -265,6 +272,7 @@ Makefile: Cliente.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.c
 		protobuf.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/c++11.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
@@ -349,6 +357,7 @@ Makefile: Cliente.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.c
 protobuf.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/c++11.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/warn_on.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf:
@@ -384,9 +393,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents protomessage.proto $(DISTDIR)/
 	$(COPY_FILE) --parents protomessage.proto $(DISTDIR)/
-	$(COPY_FILE) --parents ventanaprincipal.h configure.h my_socket_cliente.h chatwindows.h loginuser.h perfilusers.h capturebuffer.h ventanacamera.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp ventanaprincipal.cpp configure.cpp my_socket_cliente.cpp chatwindows.cpp loginuser.cpp perfilusers.cpp ventanacamera.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ventanaprincipal.ui configure.ui chatwindows.ui loginuser.ui perfilusers.ui ventanacamera.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ventanaprincipal.h configure.h my_socket_cliente.h chatwindows.h loginuser.h perfilusers.h capturebuffer.h ventanacamera.h camerawindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp ventanaprincipal.cpp configure.cpp my_socket_cliente.cpp chatwindows.cpp loginuser.cpp perfilusers.cpp ventanacamera.cpp camerawindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ventanaprincipal.ui configure.ui chatwindows.ui loginuser.ui perfilusers.ui ventanacamera.ui camerawindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -423,12 +432,13 @@ protomessage.pb.cc: protomessage.proto \
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc/moc_ventanaprincipal.cpp moc/moc_configure.cpp moc/moc_my_socket_cliente.cpp moc/moc_chatwindows.cpp moc/moc_loginuser.cpp moc/moc_perfilusers.cpp moc/moc_ventanacamera.cpp
+compiler_moc_header_make_all: moc/moc_ventanaprincipal.cpp moc/moc_configure.cpp moc/moc_my_socket_cliente.cpp moc/moc_chatwindows.cpp moc/moc_loginuser.cpp moc/moc_perfilusers.cpp moc/moc_ventanacamera.cpp moc/moc_camerawindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc/moc_ventanaprincipal.cpp moc/moc_configure.cpp moc/moc_my_socket_cliente.cpp moc/moc_chatwindows.cpp moc/moc_loginuser.cpp moc/moc_perfilusers.cpp moc/moc_ventanacamera.cpp
+	-$(DEL_FILE) moc/moc_ventanaprincipal.cpp moc/moc_configure.cpp moc/moc_my_socket_cliente.cpp moc/moc_chatwindows.cpp moc/moc_loginuser.cpp moc/moc_perfilusers.cpp moc/moc_ventanacamera.cpp moc/moc_camerawindow.cpp
 moc/moc_ventanaprincipal.cpp: perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		loginuser.h \
 		my_socket_cliente.h \
@@ -449,6 +459,7 @@ moc/moc_chatwindows.cpp: ventanaprincipal.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		loginuser.h \
 		my_socket_cliente.h \
@@ -464,6 +475,7 @@ moc/moc_loginuser.cpp: my_socket_cliente.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		loginuser.h \
 		loginuser.h
@@ -472,20 +484,25 @@ moc/moc_loginuser.cpp: my_socket_cliente.h \
 moc/moc_perfilusers.cpp: ventanacamera.h \
 		capturebuffer.h \
 		perfilusers.h \
+		camerawindow.h \
 		perfilusers.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/aledelgado/git/SOA/ChatOsO/Cliente -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include perfilusers.h -o moc/moc_perfilusers.cpp
 
 moc/moc_ventanacamera.cpp: capturebuffer.h \
 		perfilusers.h \
 		ventanacamera.h \
+		camerawindow.h \
 		ventanacamera.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/aledelgado/git/SOA/ChatOsO/Cliente -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ventanacamera.h -o moc/moc_ventanacamera.cpp
 
+moc/moc_camerawindow.cpp: camerawindow.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/aledelgado/git/SOA/ChatOsO/Cliente -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camerawindow.h -o moc/moc_camerawindow.cpp
+
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h
+compiler_uic_make_all: ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h ui_camerawindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h
+	-$(DEL_FILE) ui_ventanaprincipal.h ui_configure.h ui_chatwindows.h ui_loginuser.h ui_perfilusers.h ui_ventanacamera.h ui_camerawindow.h
 ui_ventanaprincipal.h: ventanaprincipal.ui
 	/usr/lib/x86_64-linux-gnu/qt5/bin/uic ventanaprincipal.ui -o ui_ventanaprincipal.h
 
@@ -503,6 +520,9 @@ ui_perfilusers.h: perfilusers.ui
 
 ui_ventanacamera.h: ventanacamera.ui
 	/usr/lib/x86_64-linux-gnu/qt5/bin/uic ventanacamera.ui -o ui_ventanacamera.h
+
+ui_camerawindow.h: camerawindow.ui
+	/usr/lib/x86_64-linux-gnu/qt5/bin/uic camerawindow.ui -o ui_camerawindow.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -522,6 +542,7 @@ object/main.o: main.cpp loginuser.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/main.o main.cpp
 
@@ -529,6 +550,7 @@ object/ventanaprincipal.o: ventanaprincipal.cpp ventanaprincipal.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		loginuser.h \
 		my_socket_cliente.h \
@@ -550,6 +572,7 @@ object/chatwindows.o: chatwindows.cpp chatwindows.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		loginuser.h \
 		my_socket_cliente.h \
@@ -565,6 +588,7 @@ object/loginuser.o: loginuser.cpp loginuser.h \
 		perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		configure.h \
 		ui_loginuser.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/loginuser.o loginuser.cpp
@@ -572,14 +596,20 @@ object/loginuser.o: loginuser.cpp loginuser.h \
 object/perfilusers.o: perfilusers.cpp perfilusers.h \
 		ventanacamera.h \
 		capturebuffer.h \
+		camerawindow.h \
 		ui_perfilusers.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/perfilusers.o perfilusers.cpp
 
 object/ventanacamera.o: ventanacamera.cpp ventanacamera.h \
 		capturebuffer.h \
 		perfilusers.h \
+		camerawindow.h \
 		ui_ventanacamera.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/ventanacamera.o ventanacamera.cpp
+
+object/camerawindow.o: camerawindow.cpp camerawindow.h \
+		ui_camerawindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/camerawindow.o camerawindow.cpp
 
 object/protomessage.pb.o: protomessage.pb.cc 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/protomessage.pb.o protomessage.pb.cc
@@ -604,6 +634,9 @@ object/moc_perfilusers.o: moc/moc_perfilusers.cpp
 
 object/moc_ventanacamera.o: moc/moc_ventanacamera.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/moc_ventanacamera.o moc/moc_ventanacamera.cpp
+
+object/moc_camerawindow.o: moc/moc_camerawindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o object/moc_camerawindow.o moc/moc_camerawindow.cpp
 
 ####### Install
 
