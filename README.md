@@ -22,6 +22,7 @@ Servidor
 Cliente
 ======
 * Buscar la aplicación **"ChatOsO"** entre las aplicaciones para ejecutar
+* Usuarios de la base de datos: alu1, alu2, alu3, ... , alu10 (Pass: 1234)
 
 Servidor
 =======
