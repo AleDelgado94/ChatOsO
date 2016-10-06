@@ -31,4 +31,12 @@ Servidor
 		* Dirección Servidor: 127.0.0.1
 		* Puerto: 8000
 	* [Modo Elección Configuración]: **sudo ServidorChatOsO -s dir_server -p puerto**
+
 **NOTA: Si se quiere ejecutar en modo demonio añadir opción "*-d*"**
+
+--------------------------
+
+<h2>Video de demostración:</h2>
+
+[![Alt text](https://img.youtube.com/vi/3N69QN0EjZI/0.jpg)](https://www.youtube.com/watch?v=3N69QN0EjZI)
+
